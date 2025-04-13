@@ -15,7 +15,11 @@ class CreateCartItemsTable extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('product_id')->constrained();
+            $table->integer('quantity')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

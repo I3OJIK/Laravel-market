@@ -15,7 +15,14 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();;
+            $table->string('phone'); 
+            $table->string('country');                // Страна
+            $table->string('state')->nullable();      // Область
+            $table->string('city');                   // Город
+            $table->string('street');                 // Улица и дом
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
