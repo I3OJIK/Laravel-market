@@ -38,4 +38,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function cartItems()
+    {
+        //один пользователь может иметь несколько товаров в корзине
+        return $this->hasMany(CartItem::class);
+    }
+    
+    public function addresses()
+    {
+        //один пользователь может иметь несколько адресов
+        return $this->hasMany(Address::class);
+    }
+    public function orders()
+    {
+        //один пользователь может иметь несколько заказов
+        return $this->hasMany(Order::class);
+    }
+    
 }

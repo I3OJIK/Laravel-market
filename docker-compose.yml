@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   app:
-    image: php:7.4-fpm
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: laravel-app
     working_dir: /var/www
     volumes:
@@ -40,6 +42,8 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - app-network
+    ports:
+    - "3307:3306"
 
 networks:
   app-network:

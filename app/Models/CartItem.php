@@ -8,5 +8,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CartItem extends Model
 {
     use SoftDeletes;
-    //
+    protected $guarded =[];
+    public function user()
+    {
+        // однин элемент корзины пренадлежит одному пользваотелю
+        return $this->belongsTo(User::class);
+    }
+    
+    public function product()
+    {
+        // один элемент корзины может принадлежать одному проудкту
+        return $this->belongsTo(Product::class);
+    }
 }
