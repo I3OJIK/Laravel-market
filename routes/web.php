@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CreateProduct;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/products/create', 'CreateProduct@create');

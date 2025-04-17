@@ -10,6 +10,7 @@ class Product extends Model
     protected $guarded =[];
     use SoftDeletes;
     public function categories()
+    
     {
         // одному продукту может принадлежать несколько категорий
         return $this->belongsToMany(Category::class);
