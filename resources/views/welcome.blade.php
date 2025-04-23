@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Добавление товара</title>
-    @livewireStyles
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Добавить товар</h1>
+@section('content')
+    
+    <div class="text-center p-10">
+        <h1 class="font-bold text-4xl mb-4">Responsive Product card grid</h1>
+        <h1 class="text-3xl">Tailwind CSS</h1>
+    </div>
+    @livewire('home-product-list', ['initialId' => $initialId]) {{-- это наш компонент --}}
 
-    @if (session()->has('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    @livewire('create-product') {{-- это наш компонент --}}
-
-    @livewireScripts
-</body>
-</html>
+@endsection

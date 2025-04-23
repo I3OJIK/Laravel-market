@@ -14,13 +14,13 @@ class CreateProduct extends Component
 
     public function save()
     {
-        //  // Простая валидация
-        //  $this->validate([
-        //     'name' => 'required|string|min:3',
-        //     'price' => 'required|numeric|min:0',
-        //     'description' => 'required|string|min:0',
-        //     'stock_quantity' => 'required|numeric|min:0',
-        // ]);
+         // Простая валидация
+         $this->validate([
+            'name' => 'required|string|min:3',
+            'price' => 'required|numeric|min:0',
+            'description' => 'required|string|min:0',
+            'stock_quantity' => 'required|numeric|min:0',
+        ]);
 
         // Сохраняем продукт
         Product::create([
