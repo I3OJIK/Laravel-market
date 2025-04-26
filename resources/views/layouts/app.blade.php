@@ -29,6 +29,9 @@
 
                     <!-- Ссылки -->
                     <div class="flex items-center space-x-4">
+                        <a href="{{ route('cart.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                            Cart
+                            </a>
                         @guest
                             <a href="{{ route('login') }}"
                                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">

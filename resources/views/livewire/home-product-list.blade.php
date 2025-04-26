@@ -1,7 +1,6 @@
 
-
 <div>
-    <section @if ($selectedProduct) style="display:none" @endif id="Projects"
+    <section id="Projects"
         class="w-fit mx-auto grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-16 mt-10 mb-5">
 
         @foreach ($products as $product)
@@ -31,28 +30,4 @@
             </div>
         @endforeach
     </section>  
-    @if($selectedProduct)
-    <div class="fixed top-16 inset-x-0 bottom-0 bg-white p-8 overflow-auto z-40"">
-      <button wire:click="resetSelection" class="…">← Назад к каталогу</button>
-
-      <h1>{{ $selectedProduct->name }}</h1>
-      <p>{{ $selectedProduct->description }}</p>
-      <p>₽{{ $selectedProduct->price }}</p>
-    </div>
-  @endif
-
-  <script>
-    // поймать наше dispatchBrowserEvent('pushState', …)
-    window.addEventListener('pushState', event => {
-      history.pushState({}, '', event.detail.url)
-    })
-
-    // кнопки «Назад/Вперёд» браузера
-    window.addEventListener('popstate', () => {
-      Livewire.emit('resetSelection')
-    })
-  </script>
-
 </div>
-</div>
-   

@@ -6,6 +6,6 @@
         <h1 class="font-bold text-4xl mb-4">Responsive Product card grid</h1>
         <h1 class="text-3xl">Tailwind CSS</h1>
     </div>
-    @livewire('home-product-list') {{-- это наш компонент --}}
+    @livewire('product-index',['id'=>$id]) {{-- это наш компонент --}}
 
 @endsection

@@ -14,4 +14,11 @@ class Product extends Model
         // одному продукту может принадлежать несколько категорий
         return $this->belongsToMany(Category::class);
     }
+    
+    public function colors()
+    {
+        // одному продукту может принадлежать несколько цветов
+        return $this->belongsToMany(Color::class)
+                    ->withPivot('stock');
+    }
 }

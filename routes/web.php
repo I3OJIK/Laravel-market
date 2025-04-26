@@ -22,8 +22,7 @@ Route::get('/', function(){
 });
 
 Auth::routes();
-Route::get('/products/create', 'CreateProduct@create');
-Route::get('/product/{id}', 'CreateProduct@create')->name('product.show');
+
 
 // Route::get('/product', function () {
 //     // mount() вернёт объект, .html() — готовый HTML
@@ -34,12 +33,17 @@ Route::get('/product/{id}', 'CreateProduct@create')->name('product.show');
 // 1. Главная — список товаров
 Route::get('/', function () {
     // передаём в шаблон initialId = null
-    return view('welcome', ['initialId' => null]);
+    return view('welcome');
 })->name('home');
 
 // 2. Страница товара — тот же шаблон, но initialId = $id
 Route::get('/product/{id}', function ($id) {
-    return view('welcome', ['initialId' => $id]);
+    return view('product', ['id' => $id]);
 })->name('product.show');
 
-Route::get('/home', 'HomeController@index')->name('home');
+// 3. Корзина — список товаров
+Route::get('/cart', function ($id) {
+    return view('cart');
+})->name('cart.show');
+
+
