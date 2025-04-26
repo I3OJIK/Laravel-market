@@ -41,9 +41,9 @@ Route::get('/product/{id}', function ($id) {
     return view('product', ['id' => $id]);
 })->name('product.show');
 
-// 3. Корзина — список товаров
-Route::get('/cart', function ($id) {
-    return view('cart');
-})->name('cart.show');
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', function () {
+        return view('cart');
+    })->name('cart.show');
+});
 
