@@ -18,7 +18,7 @@ class Product extends Model
     public function colors()
     {
         // одному продукту может принадлежать несколько цветов
-        return $this->belongsToMany(Color::class)
+        return $this->belongsToMany(Color::class )
                     ->withPivot('stock');
     }
 }

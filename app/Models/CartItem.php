@@ -20,4 +20,9 @@ class CartItem extends Model
         // один элемент корзины может принадлежать одному проудкту
         return $this->belongsTo(Product::class);
     }
+     // связь на pivot-запись, где хранится stock
+    public function colorProduct()
+    {
+        return $this->belongsTo(ColorProduct::class);
+    }
 }
