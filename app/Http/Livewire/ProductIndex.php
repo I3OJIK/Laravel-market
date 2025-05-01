@@ -18,17 +18,15 @@ class ProductIndex extends Component
 
     public $quantity;
 
+
     public function checkExitingProductInCart()
     {
         $this->existingItem = CartItem::where('user_id', Auth::id())
         ->where('product_id',  $this->selectedProduct->id)
         ->first(); //возвращает первую найденную запись
-        
         if ( $this->existingItem){
-            $this->quantity = $this->existingItem->quantity;
-            $this->selectedColorPivot = ColorProduct::where('product_id', $this->selectedProduct->id)
-                ->where('id', $this->existingItem->color_product_id )
-                ->first();
+            $this->quantity = $this->existingItem->quantity; //кол-во товара в корзине
+            $this->selectedColorPivot = $this->existingItem->colorProduct;
             $this->colorProductStock = $this->selectedColorPivot->stock;
             $this->selectedColorid = $this->selectedColorPivot->color_id;
         }
