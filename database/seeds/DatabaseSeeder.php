@@ -11,6 +11,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // Вставка данных для цветов
+        $this->call(ColorTableSeeder::class);
+        
+        // Вставка данных для продуктов
+        $this->call(ProductsTableSeeder::class);
+
         // $this->call(UserSeeder::class);
     }
 }

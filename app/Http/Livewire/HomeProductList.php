@@ -8,14 +8,15 @@ use Livewire\Component;
 class HomeProductList extends Component
 {
 
-    public $products;
+    protected $products;
 
 
-    protected $listeners = ['resetSelection'];
+    // protected $listeners = ['resetSelection'];
 
     public function mount()
     {
-        $this->products = Product::inRandomOrder()->take(8)->get();
+        // $this->products = Product::inRandomOrder()->take(8)->get();
+        $this->products = Product::paginate(16);
         
     }
 
@@ -26,6 +27,8 @@ class HomeProductList extends Component
     }
     public function render()
     {
-        return view('livewire.home-product-list');
+        return view('livewire.home-product-list', [
+            'products' => $this->products
+        ]);
     }
 }

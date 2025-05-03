@@ -29,5 +29,9 @@
                 </a>
             </div>
         @endforeach
+        
     </section>  
+    <div class="w-full mb-4">
+        {{ $products->links() }}
+    </div>
 </div>
