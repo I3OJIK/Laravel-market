@@ -28,52 +28,9 @@
                             {{ config('app.name', 'Shop') }}
                         </a>
                         
-                        {{-- мега меню категорий --}}
-                        <div class="relative group inline-block ml-8">
-                            <!-- Главное меню -->
-                            <a class="px-4 py-2 rounded-lg  font-medium text-gray-900 hover:bg-gray-100">
-                              Категории
-                            </a>
-                          
-                            <!-- Выпадающее мега-меню -->
-                            <div class="absolute left-0 top-full mt-1 hidden group-hover:flex bg-white shadow-lg p-6 z-50 w-[600px] justify-between rounded-lg">
-                              <!-- Колонка 1 -->
-                              <div>
-                                <h3 class="font-bold mb-2">Электроника</h3>
-                                <ul class="space-y-1 text-sm text-gray-700">
-                                  <li><a href="#" class="hover:text-blue-500">Смартфоны</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Ноутбуки</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Телевизоры</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Аксессуары</a></li>
-                                </ul>
-                              </div>
-                          
-                              <!-- Колонка 2 -->
-                              <div>
-                                <h3 class="font-bold mb-2">Одежда</h3>
-                                <ul class="space-y-1 text-sm text-gray-700">
-                                  <li><a href="#" class="hover:text-blue-500">Мужская</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Женская</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Детская</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Обувь</a></li>
-                                </ul>
-                              </div>
-                          
-                              <!-- Колонка 3 -->
-                              <div>
-                                <h3 class="font-bold mb-2">Дом и сад</h3>
-                                <ul class="space-y-1 text-sm text-gray-700">
-                                  <li><a href="#" class="hover:text-blue-500">Мебель</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Инструменты</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Освещение</a></li>
-                                  <li><a href="#" class="hover:text-blue-500">Кухня</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        <div>
+                        
                             
-                        </div>
+                        
                     </div>
                     
 

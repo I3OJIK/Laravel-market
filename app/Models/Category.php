@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Category extends Model
 {
     protected $guarded =[];
-    public function products()
+
+    public function subcategories()
     {
-        // одной категории может принадлежать много продуктов
-        return $this->belongsToMany(Product::class);
+        // одной категории принадлежит много подкатегорий
+        return $this->hasmany(Subcategory::class);
     }
 }
+

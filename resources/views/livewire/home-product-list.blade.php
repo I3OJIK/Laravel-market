@@ -1,4 +1,26 @@
-
+{{-- мега меню категорий --}}
+<div class="relative group inline-block ml-8">
+    <!-- Главное меню -->
+    <a class="px-4 py-2  rounded-lg text-xl font-medium text-gray-900 hover:bg-gray-100">
+      Категории
+    </a>
+  
+    <!-- Выпадающее мега-меню -->
+    <div class="absolute left-0 top-full mt-1 hidden group-hover:flex bg-white shadow-lg p-6 z-50 w-[600px] justify-between rounded-lg">
+      <!-- Колонка 1 -->
+      @foreach ($categories as $category)
+        <div>
+            <h3 class="font-bold mb-2">{{ $category->name }}</h3>
+            <ul class="space-y-1 text-sm text-gray-700">
+                @foreach ($category->subcategories as $subcategory)
+                    <li><a href="#" class="hover:text-blue-500">{{ $subcategory->name }}</a></li>
+                @endforeach
+            </ul>
+        </div>
+        @endforeach
+    </div>
+  </div>
+<div>
 <div>
     <section id="Projects"
         class="w-fit mx-auto grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-16 mt-10 mb-5">
@@ -31,7 +53,7 @@
         @endforeach
         
     </section>  
-    <div class="w-full mb-4">
+    <div class="w-full">
         {{ $products->links() }}
     </div>
 </div>
