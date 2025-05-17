@@ -17,10 +17,11 @@ class CreateAddressesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();;
             $table->string('phone'); 
-            $table->string('country');                // Страна
-            $table->string('state')->nullable();      // Область
-            $table->string('city');                   // Город
-            $table->string('street');                 // Улица и дом
+            $table->string('address_text');                // строка адреса
+            $table->string('apartment_number')->nullable();      // номер кв
+            $table->string('doorphone');                   // домофон
+            $table->string('entrance');                 // подьезд
+            $table->string('floor');                 // этаж
             $table->timestamps();
             $table->softDeletes();
         });

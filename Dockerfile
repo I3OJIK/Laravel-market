@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     git \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-
+    RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 # Установка Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

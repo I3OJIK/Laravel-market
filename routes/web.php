@@ -23,12 +23,7 @@ Route::get('/', function(){
 
 Auth::routes();
 
-
-// Route::get('/product', function () {
-//     // mount() вернёт объект, .html() — готовый HTML
-//     return Livewire::mount('home-product-list')->html();
-// })->name('products.index');
-
+Route::get('/yandex-suggest', 'YandexController@suggest');
 
 // 1. Главная — список товаров
 Route::get('/', function () {
@@ -45,5 +40,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart', function () {
         return view('cart');
     })->name('cart.show');
+
+    Route::get('/orders', function () {
+        return view('orders');
+    })->name('orders.show');
+
 });
 

@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: laravel-app
     working_dir: /var/www
+    user: "${UID:-1000}:${GID:-1000}"  # 🔥 Важно: добавляем эту строку
     volumes:
       - .:/var/www
     networks:
@@ -43,7 +44,7 @@ services:
     networks:
       - app-network
     ports:
-    - "3307:3306"
+      - "3307:3306"
 
 networks:
   app-network:

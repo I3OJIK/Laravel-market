@@ -20,4 +20,10 @@ class OrderItem extends Model
          // Определение связи с моделью Order (Один OrderItem принадлежит одному Product)
         return $this->belongsTo(Product::class); // foreign_id в таблице order_items будет ссылаться на id в таблице products
     }
+
+    public function color()
+    {
+       
+        return $this->belongsTo(Color::class); 
+    }
 }

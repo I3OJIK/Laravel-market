@@ -39,6 +39,9 @@
                         <a href="{{ route('cart.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
                             Cart
                             </a>
+                        <a href="{{ route('orders.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                            Orders
+                            </a>
                         @guest
                             <a href="{{ route('login') }}"
                                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
@@ -70,10 +73,15 @@
         <main class="py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 @yield('content')
-                @livewireScripts   
+
 
             </div>
         </main>
     </div>
+
+    
+    @livewireScripts
+    @stack('scripts')
+    
 </body>
 </html>

@@ -17,4 +17,6 @@ class Subcategory extends Model
         // одной подкатегории принадлежит одна категория
         return $this->belongsTo(Category::class);
     }
+
+  
 }

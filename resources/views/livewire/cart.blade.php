@@ -19,7 +19,7 @@
                         <!-- Правая часть: Удалить выбранные -->
                         <button
                             wire:click="deleteSelected"
-                            class="px-4 py-1 text-sm bg-white hover:bg-gray-100  rounded-lg"
+                            class="px-4 py-1 text-sm bg-white hover:bg-gray-100  rounded-lg {{$selectedCartItems ? '' : 'pointer-events-none'}}"
                         >
                             Удалить выбранные
                         </button>
@@ -36,7 +36,9 @@
                         </thead>
                         <tbody>
                             @foreach ($cartItems as $cartItem)
-                                    <tr wire:key="item-{{ $cartItem->id }}">
+                                    <tr wire:key="item-{{ $cartItem->id }}" 
+                                        {{-- если товар данного цвета закончился заблокировать его и затемнить --}}
+                                        class="{{$cartItem->colorProduct->stock <= 0 ? 'pointer-events-none opacity-50' : ''}}">
                                         <td class="py-4">
                                             <div class="flex items-center">
                                                 <!-- обёртка для картинки + чекбокса -->
@@ -73,11 +75,18 @@
                                         <td class="py-4">₽{{$cartItem->Product->price}}</td>
                                         <td class="py-4">
                                             <div class="flex items-center">
-                                                <button  wire:click="decrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 mr-2">-</button>
-                                                <span class="text-center w-8">{{$cartItem->quantity}}</span>
-                                                <button wire:click="incrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 ml-2">+</button>
+
+                                                @if ($cartItem->colorProduct->stock > 0)
+                                                    <button  wire:click="decrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 mr-2">-</button>
+                                                    <span class="text-center w-8">{{$cartItem->quantity}}</span>
+                                                    <button wire:click="incrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 ml-2">+</button>
+                                                        
+                                                @else
+                                                   <p>Товар закончился🥺</p> 
+                                                @endif
                                             </div>
                                         </td>
+                                        
                                         <td class="py-4">₽{{($cartItem->Product->price) * ($cartItem->quantity)}}</td>
                                     </tr>
                             @endforeach
@@ -117,9 +126,10 @@
     </div>
 
     {{-- модальное окно --}}
+     {{-- меню оформления заказа --}}
     @if($showCheckoutModal)
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl p-6 relative">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
         <button wire:click="$set('showCheckoutModal', false)" class="absolute top-2 right-2 text-gray-600 hover:text-black text-xl">&times;</button>
         
         <h2 class="text-xl font-semibold mb-4">Подтверждение заказа</h2>
@@ -135,26 +145,78 @@
                        
                     </li>
                 @endforeach
+                <li class="mt-4">
+                    <span class="font-semibold">Итого:</span>
+                    ₽{{$totalPrice}}
+                </li>
             </ul>
         </div>
-
+       
         <div class="mb-4">
             <label class="block font-semibold mb-1">Адрес доставки:</label>
             <input
                 type="text"
-                wire:model="deliveryAddress"
-                class="w-full border border-gray-300 rounded px-3 py-2"
+                wire:model="addressString"
+                wire:focus="AddressinputFocused"
+                wire:blur="AddressinputBlur"
+                class=" peer  w-full items-center border border-gray-300 hover:placeholder-gray-800  rounded px-3 py-2 mb-4 "
                 placeholder="Введите адрес..."
             >
+                    @if(!empty($suggestions))
+                 <ul class="mt-2 border bg-white shadow-lg {{ $showAddressesExample ? '' : 'hidden' }}"> {{--показывать примеры адресов если инпут выбран --}}
+                    @foreach($suggestions as $suggestion)
+                        <li  wire:click="selectExampleAddress('{{ $suggestion['subtitle'] ? $suggestion['subtitle'] . ', ' : '' }}{{ $suggestion['title'] }}')"
+                        class="px-4 py-2 cursor-pointer hover:bg-gray-100">{{ $suggestion['subtitle'] ? $suggestion['subtitle'] . ', ' : '' }}{{ $suggestion['title'] }}</li>
+                    @endforeach
+                </ul>
+                    @elseif(strlen($addressString) > 2)
+                        <div class="mt-2 p-4 text-gray-500">Нет предложений</div>
+                    @endif
+
+                {{-- открывает доп поля для адреса, срабатывает когда выбрали адрес (нажали на один из вариантов) --}}
+                @if ($showAddressesAddons && isset($addressString)) 
+                <div class="mb-4 flex inline-block justify-between">
+                    <input wire:model="apartment_number" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Кв./офис">
+                    <input wire:model="doorphone" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Домофон">
+                    <input wire:model="entrance" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Подъезд">
+                    <input wire:model="floor" type="text" class="w-1/5 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Этаж"> 
+                </div>
+                <input wire:model="phone"   type="text" class="w-1/3 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 required"
+                    placeholder="Номер телефона"
+                    id="phone-mask"> 
+                    @endif
         </div>
 
         <button
-            wire:click="submitOrder"
+            wire:click="OrderConfirm"
             class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
         >
             Подтвердить заказ
         </button>
+        
     </div>
 </div>
+
 @endif
 </div>
+    {{-- маска для  номера телефона --}}
+    @push('scripts')
+    <script src="https://unpkg.com/imask"></script>
+
+    <script>
+             Livewire.hook('message.processed', () => {
+            const phoneInput = document.getElementById('phone-mask');
+            if (phoneInput && !phoneInput.dataset.masked) {
+                const mask = IMask(phoneInput, { mask: '+{7} (000) 000-00-00' });
+                
+            }
+        });
+
+        // уведомление при создании заказа
+        window.addEventListener('order-success', () => {
+            alert('Заказ успешно оформлен!');
+            // Или кастомный toast
+        });
+
+    </script>
+@endpush

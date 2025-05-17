@@ -60,7 +60,11 @@
                     <div class="flex items-center mt-2">
                         <div class="flex items-center space-x-3">
                             @foreach ($selectedProduct->colors as $color)
-                                <label class="relative">
+                                <label class="
+                                            relative
+                                            {{-- если остаток товара данного цвета ноль то не отображаем --}}
+                                            {{$color->pivot->stock <= 0 ? 'hidden' : ''}}
+                                        ">
                                     <input
                                         type="radio"
                                         name="color"

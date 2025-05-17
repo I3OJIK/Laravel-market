@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
         
         // Вставка данных для продуктов
         $this->call(ProductsTableSeeder::class);
+        $this->call(CategoriesTableSeeder::class);
+        $this->call(SubcategoriesTableSeeder::class);
+        $this->call(ProductSubcategoryTableSeeder::class);
 
         // $this->call(UserSeeder::class);
     }
