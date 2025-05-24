@@ -23,7 +23,7 @@ Route::get('/', function(){
 
 Auth::routes();
 
-Route::get('/yandex-suggest', 'YandexController@suggest');
+
 
 // 1. Главная — список товаров
 Route::get('/', function () {
@@ -44,6 +44,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders', function () {
         return view('orders');
     })->name('orders.show');
+
+});
+
+
+//админ панель
+Route::middleware(['is_admin'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.dashboard-index');
+    })->name('admin.dashboard');
+
+    Route::get('/admin/products', function () {
+        return view('admin.products-index');
+    })->name('admin.products-index');
+    
+    Route::get('/admin/add/product', function () {
+        return view('admin.add-product');
+    })->name('admin.add-product');
+
+    Route::get('/admin/categories', function () {
+        return view('admin.categories-index');
+    })->name('admin.categories-index');
 
 });
 

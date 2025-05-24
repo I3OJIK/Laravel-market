@@ -9,10 +9,11 @@ class Product extends Model
 {
     protected $guarded =[];
     use SoftDeletes;
-    public function categories()
+
+    public function subcategories()
     {
-        // одному продукту может принадлежать несколько категорий
-        return $this->belongsToMany(Category::class);
+        // одному продукту может принадлежать несколько подкатегорий
+        return $this->belongsToMany(Subcategory::class);
     }
     
     public function colors()

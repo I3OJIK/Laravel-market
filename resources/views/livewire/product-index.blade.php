@@ -3,7 +3,16 @@
         <div class="flex flex-col md:flex-row -mx-4">
             <div class="md:flex-1 px-4">
                 <div class="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
-                    <img class="w-full h-full object-cover" src="https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg" alt="Product Image">
+                    <img class="w-full h-full object-cover" 
+                    
+                         @if (Storage::disk('public')->exists($selectedProduct->image_url))
+                              src="{{ asset('storage/' . $selectedProduct->image_url) }}"
+                              alt="SelectedProduct" class="h-80 w-72 object-cover rounded-t-xl" 
+                            @else
+                              src="https://images.unsplash.com/photo-1646753522408-077ef9839300?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                              alt="SelectedProduct" class="h-80 w-72 object-cover rounded-t-xl" 
+                            @endif />
+                    >
                 </div>
                 <div class="flex -mx-2 mb-4">
                     <div class="w-1/2 px-2">

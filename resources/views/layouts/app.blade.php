@@ -36,6 +36,11 @@
 
                     <!-- Ссылки -->
                     <div class="flex items-center space-x-4">
+                        @if (Auth::user()->role =='admin')
+                            <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
+                                Admin
+                                </a>
+                        @endif
                         <a href="{{ route('cart.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
                             Cart
                             </a>
@@ -69,14 +74,17 @@
             </div>
         </nav>
 
+        <div class="">
+            @yield('adminSideBar')
+        </div>
         <!-- Основное содержимое -->
         <main class="py-6">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 @yield('content')
-
-
             </div>
         </main>
+        
     </div>
 
     

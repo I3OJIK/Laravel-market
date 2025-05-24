@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Address;
 use App\Models\CartItem;
+use App\Models\ColorProduct;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
@@ -231,7 +232,8 @@ class Cart extends Component
             'selectedCartItems',
             'totalPrice',
         ]);
-
+        // Удаляем только те ColorProduct, где stock <= 0
+        // ColorProduct::where('stock', '<=', 0)->delete();
         $this->showCheckoutModal = false;
 
         $this->dispatchBrowserEvent('order-success');

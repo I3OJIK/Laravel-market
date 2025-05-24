@@ -20,5 +20,9 @@
         "sass-loader": "^8.0.0",
         "tailwindcss": "^1.9.6",
         "vue-template-compiler": "^2.7.16"
+    },
+    "dependencies": {
+        "alpinejs": "^3.14.9",
+        "flatpickr": "^4.6.13"
     }
 }
