@@ -9,7 +9,7 @@
         <input
           type="text"
           wire:model.defer="name"
-          class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-1"
         />
         @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
       </div>
@@ -20,7 +20,7 @@
         <textarea
           wire:model.defer="description"
           rows="3"
-          class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-1"
         ></textarea>
       </div>
   
@@ -31,7 +31,7 @@
           type="number"
           min="1"
           wire:model.defer="price"
-          class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-1"
         />
         @error('price') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
       </div>
@@ -57,7 +57,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
         <select
           wire:model="categoryId"
-          class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-1"
         >
           <option value="">— выберите —</option>
           @foreach($allCategories as $cat)
@@ -95,7 +95,7 @@
                 type="number"
                 min="0"
                 wire:model.defer="colorStocks.{{ $color->id }}"
-                class="w-24 border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-900 "
+                class="w-24 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 "
               />
             </div>
           @endforeach

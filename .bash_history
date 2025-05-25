@@ -28,3 +28,26 @@ php artisan tinker
 php artisan maka:livewire
 php artisan make:livewire
 php artisan make:livewire Admin.AddProduct
+php artisan storage:link
+php artisan make:livewire Admin.Categories
+php artisan migration:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan make:livewire Admin.AddCategory
+php artisan make:livewire Admin.OrdersIndex
+docker ps
+exit

@@ -91,7 +91,7 @@
                 </td>
                 <td class="p-4 border-b border-r border-indigo-200">
                     <p class="block text-sm text-slate-800">
-                        {{$product->subcategories->first()->category->name}}
+                        {{$product->category->name}}
                     </p>
                 </td>
                 <td class="p-4 border-b border-r border-indigo-200">
@@ -150,7 +150,8 @@
             <input
               type="text"
               wire:model.defer="name"
-              class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2.5  dark:border-indigo-600 
+                        dark:placeholder-indigo-400"
             />
             @error('product.name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
           </div>
@@ -161,7 +162,8 @@
             <textarea
               wire:model.defer="description"
               rows="3"
-              class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2.5  dark:border-indigo-600 
+                        dark:placeholder-indigo-400"
             ></textarea>
           </div>
 
@@ -173,7 +175,8 @@
               step="1"
               min="1"
               wire:model.defer="price"
-              class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2.5  dark:border-indigo-600 
+                        dark:placeholder-indigo-400"
             />
             @error('product.price') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
           </div>
@@ -183,7 +186,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
             <select
               wire:model="categoryId"
-              class="w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2.5  dark:border-indigo-600 
+                        dark:placeholder-indigo-400"
             >
               <option value="">— выберите —</option>
               @foreach($allCategories as $cat)
@@ -221,7 +225,8 @@
                     type="number"
                     min="0"
                     wire:model.defer="colorStocks.{{ $color->id }}"
-                    class="w-24 border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    class="w-32 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2.5  dark:border-indigo-600 
+                        dark:placeholder-indigo-400"
                   />
                 </div>
               @endforeach

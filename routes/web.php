@@ -66,5 +66,13 @@ Route::middleware(['is_admin'])->group(function () {
         return view('admin.categories-index');
     })->name('admin.categories-index');
 
+    Route::get('/admin/add/categories', function () {
+        return view('admin.add-category');
+    })->name('admin.add-category');
+
+    Route::get('/admin/orders', function () {
+        return view('admin.orders-index');
+    })->name('admin.orders-index');
+
 });
 

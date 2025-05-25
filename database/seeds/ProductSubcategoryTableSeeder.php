@@ -12,20 +12,24 @@ class ProductSubcategoryTableSeeder extends Seeder
      */
     public function run()
     {
-         // Получаем все ID
-         $productIds = DB::table('products')->pluck('id')->toArray();
-         $subcategoryIds = DB::table('subcategories')->pluck('id')->toArray();
+        
+         // Получаем продукты с их category_id
+        $products = DB::table('products')->select('id', 'category_id')->get();
+        
  
          $pivotData = [];
  
          // Допустим, каждый продукт будет иметь от 1 до 3 подкатегорий
-         foreach ($productIds as $productId) {
-             $randomSubcategories = collect($subcategoryIds)->random(rand(1, 2))->unique();
+         foreach ($products as $product) {
+            $categoryId = $product->category_id;
+            $subcategories = DB::table('subcategories')->select('id', 'category_id')->where('category_id', $categoryId)->get();
+
+             $randomSubcategories = collect($subcategories)->random(rand(1, 2))->unique();
  
-             foreach ($randomSubcategories as $subcategoryId) {
+             foreach ($randomSubcategories as $subcategory) {
                  $pivotData[] = [
-                     'product_id' => $productId,
-                     'subcategory_id' => $subcategoryId,
+                     'product_id' => $product->id,
+                     'subcategory_id' => $subcategory->id,
                  ];
              }
          }

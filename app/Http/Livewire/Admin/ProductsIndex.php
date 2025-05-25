@@ -40,20 +40,26 @@ class ProductsIndex extends Component
     public function editingProduct($id)
     {
         if ($id) {
-
-            $this->product = Product::with(['subcategories','colors'])->findOrFail($id);
+            $this->product = Product::with(['subcategories','colors','category'])->findOrFail($id);
+            // dd($this->product->subcategories);
             $this->name = $this->product->name;
             $this->description = $this->product->description;
             $this->price = $this->product->price;
-            $this->categoryId = $this->product->subcategories->first()->category->id;
-            // dd($this->product->subcategories->first()->category->id);
+            $this->categoryId = $this->product->category->id;
+            
             $this->updatedCategoryId();
-            $this->subcategoryIds = $this->product->subcategories->pluck('id')->toArray();
+            $this->subcategoryIds = $this->product->subcategories->pluck('id')->toArray();  
             foreach ($this->product->colors as $color) {
                 $this->colorStocks[$color->id] = $color->pivot->stock;
             }
             $this->showModal= true;
         }
+    }
+
+    public function updatedCategoryId()
+    {
+        $this->subcategories =$this->allSubcategories->where('category_id',$this->categoryId );
+        $this->subcategoryIds =[];
     }
 
     public function deleteProduct($id)
@@ -80,21 +86,19 @@ class ProductsIndex extends Component
                 $colorId => ['stock' => $stock]
             ]);
         }
+        $this->colorStocks = [];
         $this->showModal= false;
     }
-    public function updatedCategoryId()
-    {
-        $this->subcategories =$this->allSubcategories->where('category_id',$this->categoryId );
-        $this->subcategoryIds =[];
-    }
+    
     public function render()
     {
         // осуществление поиска
         $query = Product::query();
 
         if (strlen($this->searchInput) >= 3) {
-            $query->where('name', 'like', $this->searchInput . '%');
-        }
+           $query->where('name', 'like', $this->searchInput . '%');
+        } 
+        
 
         return view('livewire.admin.products-index', [
             'products' => $query->get()

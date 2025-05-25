@@ -15,6 +15,12 @@ class Product extends Model
         // одному продукту может принадлежать несколько подкатегорий
         return $this->belongsToMany(Subcategory::class);
     }
+
+    public function category()
+    {
+        // одному продукту может принадлежать несколько подкатегорий
+        return $this->belongsTo(Category::class);
+    }
     
     public function colors()
     {

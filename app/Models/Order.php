@@ -30,9 +30,15 @@ class Order extends Model
             $order->orderItems()->restore();
         });
     }
+    
     public function orderItems()
     {
          // Определение связи с моделью OrderItem (Один Order может иметь несколько OrderItems)
         return $this->hasMany(OrderItem::class);// В заказе могут быть несколько товаров
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
     }
 }

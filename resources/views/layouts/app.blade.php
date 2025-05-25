@@ -36,7 +36,7 @@
 
                     <!-- Ссылки -->
                     <div class="flex items-center space-x-4">
-                        @if (Auth::user()->role =='admin')
+                        @if ((Auth::user())&&(Auth::user()->role =='admin'))
                             <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
                                 Admin
                                 </a>

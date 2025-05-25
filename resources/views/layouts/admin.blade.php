@@ -75,22 +75,18 @@
                                 <a  href="{{ route('admin.categories-index') }}" class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
                                     Все
                                 </a>
-                                <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
+                                <a href="{{ route('admin.add-category') }}" class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
                                     Добавить
                                 </a>
-                                <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
-                                    Изменить
-                                </a>
-
                             </div>
                         </div>
     
-                        <!-- Projects -->
-                        <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+                        <!-- orders -->
+                        <a href="{{ route('admin.orders-index') }}" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
                             <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                             </svg>
-                            Projects
+                            Orders
                         </a>
     
                         <!-- Calendar -->
@@ -128,7 +124,6 @@
             <main class="flex-1 p-6 bg-gray-100">
                 <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
                 <div class="mt-4 p-6 bg-white rounded-lg shadow-md">
-                    <p class="text-gray-600">This is a dark sidebar example with submenus.</p>
                     @yield('admin')
                 </div>
             </main>
