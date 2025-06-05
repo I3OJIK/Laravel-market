@@ -2,39 +2,51 @@
 <div>
     <div class="w-full centr">
         @if ($selectedSubcategory)
-            <div class="text-center p-10">
-                <h1 class="font-bold text-2xl mb-4">{{$subcategories->name}}</h1>
+            <div class="text-center">
+                <h1 class="font-bold text-2xl mb-2">{{$subcategories->name}}</h1>
             </div>
         @endif
     </div>
     
-    <div class="flex items-center justify-between w-full px-4 py-3 relative">
+    <div class="flex items-center justify-between w-full px-2 py-2 relative">
 
       <!-- Категории -->
       <div class="relative group">
-        <a class="px-4 py-2 rounded-lg text-base font-medium text-gray-900 hover:bg-gray-100 cursor-pointer">
+        <!-- Кнопка -->
+        <a class="rounded-lg text-base font-medium text-gray-900 hover:bg-gray-100 cursor-pointer">
           Категории
         </a>
-        <div class="absolute left-0 top-full mt-1 hidden group-hover:flex bg-white shadow-lg p-6 z-50 w-[600px] justify-between rounded-lg">
-          @foreach ($categories as $category)
-            <div>
-              <h3 class="font-bold mb-2">{{ $category->name }}</h3>
-              <ul class="space-y-1 text-sm text-gray-700">
-                @foreach ($category->subcategories as $subcategory)
-                  <li>
-                    <a href="#" wire:click.prevent="selectSubcategory({{ $subcategory->id }})" class="transition-all duration-400 hover:text-indigo-600">
-                      {{ $subcategory->name }}
-                    </a>
-                  </li>
-                @endforeach
-              </ul>
-            </div>
-          @endforeach
+      
+        <!-- Выпадающее меню -->
+        <div class="absolute left-0 top-full mt-1 hidden group-hover:block z-50 ">
+          <div class="
+            flex flex-col gap-4 bg-white shadow-lg rounded-lg p-4
+            md:flex-row md:justify-between
+          ">
+            @foreach ($categories as $category)
+              <div class="min-w-[150px]">
+                <h3 class="font-bold mb-2 text-sm md:text-base">{{ $category->name }}</h3>
+                <ul class="space-y-1 text-sm text-gray-700">
+                  @foreach ($category->subcategories as $subcategory)
+                    <li>
+                      <a href="#"
+                         wire:click.prevent="selectSubcategory({{ $subcategory->id }})"
+                         class="transition-all duration-300 hover:text-indigo-600 block">
+                        {{ $subcategory->name }}
+                      </a>
+                    </li>
+                  @endforeach
+                </ul>
+              </div>
+            @endforeach
+          </div>
         </div>
       </div>
+      
+      
     
       <!-- Поиск -->
-      <div class="flex-1 mx-4 max-w-lg">
+      <div class="flex-1 mx-3 max-w-lg ">
         <div class="relative">
           <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
@@ -47,7 +59,7 @@
       <div class="relative group">
         <a type="button" class="group inline-flex items-center  text-sm font-medium text-gray-700  hover:text-gray-900 cursor-pointer" id="menu-button">
             Sort
-            <svg class="-mr-1 ml-1 h-5 w-5 text-gray-400 transition-all duration-500 group-hover:text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="mr-1 ml-1 h-5 w-5 text-gray-400 transition-all duration-500 group-hover:text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
             </svg>
           </a>

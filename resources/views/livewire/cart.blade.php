@@ -24,7 +24,8 @@
                             Удалить выбранные
                         </button>
                     </div>
-                    <table class="w-full">
+                    {{-- //вариант дял десктопов --}}
+                    <table class="hidden md:table w-full">
                         <thead>
                             <tr>
                                 <th class="text-left font-semibold">Product</th>
@@ -43,11 +44,15 @@
                                             <div class="flex items-center">
                                                 <!-- обёртка для картинки + чекбокса -->
                                                 <div class="relative inline-block mr-4">
-                                                        <img
-                                                        class="size-20 block"
-                                                        src="https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
-                                                        alt="Product image"
-                                                        >
+                                                        <img 
+                                                            @if (Storage::disk('public')->exists($cartItem->product->image_url))
+                                                            src="{{ asset('storage/' . $cartItem->product->image_url) }}"
+                                                            alt="Product" class="w-24 h-24 object-cover mb-2 rounded-xl" 
+                                                            @else
+                                                            src="https://images.unsplash.com/photo-1646753522408-077ef9839300?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                                                            alt="Product" class="w-24 h-24 object-cover mb-2 rounded-xl" 
+                                                            @endif 
+                                                        />
                                                         <!-- чекбокс внутри этого же блока -->
                                                         <input
                                                         id="default-checkbox"
@@ -90,9 +95,70 @@
                                         <td class="py-4">₽{{($cartItem->Product->price) * ($cartItem->quantity)}}</td>
                                     </tr>
                             @endforeach
-                            <!-- More product rows -->
                         </tbody>
                     </table>
+                    
+                    <!-- MOBILE VIEW -->
+                    <div class="md:hidden px-4 py-4 border-b border-gray-100 flex flex-col gap-1 text-sm">
+                        @foreach ($cartItems as $cartItem)
+                            <div class="border border-gray-300 rounded-lg p-4
+                                    {{ $cartItem->colorProduct->stock <= 0 ? 'pointer-events-none opacity-50' : '' }}" 
+                                    wire:key="mobile-{{ $cartItem->id }}">
+                                
+                                <!-- Product name and checkbox -->
+                                <div class="flex items-center mb-2">
+                                    <input type="checkbox"
+                                        wire:model="selectedCartItems"
+                                        value="{{ $cartItem->id }}"
+                                        class="mr-2 w-4 h-4">
+                                    <span class="font-semibold text-gray-900">{{ $cartItem->Product->name }}</span>
+                                </div>
+
+                                <!-- Product image -->
+                                <img 
+                                    @if (Storage::disk('public')->exists($cartItem->product->image_url))
+                                    src="{{ asset('storage/' . $cartItem->product->image_url) }}"
+                                    alt="Product" class="w-24 h-24 object-cover mb-2 rounded-xl" 
+                                    @else
+                                    src="https://images.unsplash.com/photo-1646753522408-077ef9839300?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwcm9maWxlLXBhZ2V8NjZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                                    alt="Product" class="w-24 h-24 object-cover mb-2 rounded-xl" 
+                                    @endif 
+                                />
+
+                                <!-- Color -->
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium w-24">Color:</span>
+                                    <div class="w-5 h-5 rounded-full ml-2 {{ $cartItem->colorProduct->color->color_class }}"></div>
+                                </div>
+
+                                <!-- Price -->
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium w-24">Price:</span> 
+                                   <p> ₽{{ $cartItem->Product->price }}</p>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium w-24">Quantity:</span>
+                                    <div class="ml-4">
+                                        @if ($cartItem->colorProduct->stock > 0)
+                                            <button wire:click="decrementQuantity({{ $cartItem->id }})" class="border px-2 mr-2">-</button>
+                                            <span>{{ $cartItem->quantity }}</span>
+                                            <button wire:click="incrementQuantity({{ $cartItem->id }})" class="border px-2 ml-2">+</button>
+                                        @else
+                                            <span>Товар закончился🥺</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Total -->
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium w-24">Total:</span>
+                                    <p class="font-medium"> ₽{{ $cartItem->Product->price * $cartItem->quantity }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
             <div class="md:w-1/4">
@@ -128,7 +194,7 @@
     {{-- модальное окно --}}
      {{-- меню оформления заказа --}}
     @if($showCheckoutModal)
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div class="fixed inset-0 bg-black bg-opacity-50 flex  items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
         <button wire:click="$set('showCheckoutModal', false)" class="absolute top-2 right-2 text-gray-600 hover:text-black text-xl">&times;</button>
         

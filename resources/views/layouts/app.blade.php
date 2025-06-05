@@ -27,26 +27,9 @@
                         <a href="{{ url('/') }}" class="text-xl font-semibold text-gray-800 hover:text-gray-600">
                             {{ config('app.name', 'Shop') }}
                         </a>
-                        
-                        
-                            
-                        
                     </div>
-                    
-
                     <!-- Ссылки -->
                     <div class="flex items-center space-x-4">
-                        @if ((Auth::user())&&(Auth::user()->role =='admin'))
-                            <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
-                                Admin
-                                </a>
-                        @endif
-                        <a href="{{ route('cart.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
-                            Cart
-                            </a>
-                        <a href="{{ route('orders.show') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
-                            Orders
-                            </a>
                         @guest
                             <a href="{{ route('login') }}"
                                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
@@ -59,15 +42,41 @@
                                 </a>
                             @endif
                         @else
-                            <span class="text-gray-700">{{ Auth::user()->name }}</span>
-                            <a href="{{ route('logout') }}"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                               class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                                @csrf
-                            </form>
+                            {{-- <span class="text-gray-700">{{ Auth::user()->name }}</span> --}}
+                            <div class="relative group">
+                                <a type="button" class="group inline-flex items-center  text-sm font-medium text-gray-700  hover:text-gray-900 cursor-pointer" id="menu-button">
+                                    {{ Auth::user()->name }}
+                                    <svg class="-mr-1 ml-1 h-5 w-5 text-gray-400 transition-all duration-500 group-hover:text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                  </a>
+                                <!-- Меню открывается при наведении на родительский элемент или сам список -->
+                                <div class="absolute right-0 mt-0 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 z-50 opacity-0 group-hover:opacity-100 group-hover:block hidden transition-opacity">
+                                    <div class="py-1 mt-2">
+                                        @if ((Auth::user())&&(Auth::user()->role =='admin'))
+                                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 font-medium transition-all duration-900  hover:text-indigo-500">
+                                                Admin
+                                                </a>
+                                         @endif
+                                        <a href="{{ route('cart.show') }}" class="block px-4 py-2 text-sm text-gray-700  font-medium transition-all duration-900  hover:text-indigo-500">
+                                            Cart
+                                        </a>
+                                        <a href="{{ route('orders.show') }}" class="block px-4 py-2 text-sm text-gray-700 font-medium transition-all duration-900  hover:text-indigo-500">
+                                            Orders
+                                        </a>
+                                        <a href="{{ route('logout') }}"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                            class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900 font-medium hover:text-indigo-500">
+                                                {{ __('Logout') }}
+                                        </a>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                                            @csrf
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
                         @endguest
                     </div>
                 </div>

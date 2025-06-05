@@ -24,24 +24,26 @@
                                 class="font-medium text-lg leading-8 cursor-pointer text-black transition-all duration-500 hover:text-indigo-600
                                 {{ $activeFilter === 'Completed' ? 'text-indigo-600' : 'text-black' }}">
                                 Completed</li>
-                            <li ire:click="$set('activeFilter', 'Cancelled')"
+                            <li wire:click="$set('activeFilter', 'Cancelled')"
                                 class="font-medium text-lg leading-8 cursor-pointer text-black transition-all duration-500 hover:text-indigo-600
                                 {{ $activeFilter === 'Cancelled' ? 'text-indigo-600' : 'text-black' }}">
                                 Cancelled</li>
+
+                                 <!-- Поиск -->
+                            <div class="flex-1 mx-4 max-w-lg items-center justify-center m-4">
+                                <div class="relative ">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+                                </svg>
+                                <input wire:model="searchInput" class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 
+                                    text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 shadow-sm transition-all
+                                    duration-900  hover:border-indigo-600 focus:outline-none focus:border-indigo-600  focus:shadow"
+                                    placeholder="Input id order..." />
+                                </div>
+                            </div>
                     </ul>
 
-                    <!-- Поиск -->
-                    <div class="flex-1 mx-4 max-w-lg items-center justify-center m-4">
-                        <div class="relative ">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
-                        </svg>
-                        <input wire:model="searchInput" class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 
-                            text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 shadow-sm transition-all
-                            duration-900  hover:border-indigo-600 focus:outline-none focus:border-indigo-600  focus:shadow"
-                            placeholder="Input id order..." />
-                        </div>
-                    </div>
+                   
     
                 </div>
     

@@ -37,6 +37,7 @@ class ProductsIndex extends Component
         $this->allColors = Color::all();
     }
     
+    // при нажатии на редактирование подготавливаются переменные и открывается модалка
     public function editingProduct($id)
     {
         if ($id) {
@@ -82,9 +83,16 @@ class ProductsIndex extends Component
         
         $this->product->subcategories()->sync($this->subcategoryIds); //sync удаляет все кроме того что есть в массиве и добавит новые
         foreach ($this->colorStocks as $colorId => $stock) {
-            $this->product->colors()->syncWithoutDetaching([
-                $colorId => ['stock' => $stock]
-            ]);
+            // ессли поле после редактирование ноль или пустое то удалит запись о нем из пивот таблицы
+            if ($stock == 0 || $stock == null){
+                // удалить связь с этим цветом
+                $this->product->colors()->detach($colorId);
+            }
+            else{
+                $this->product->colors()->syncWithoutDetaching([
+                    $colorId => ['stock' => $stock]
+                ]);
+             }
         }
         $this->colorStocks = [];
         $this->showModal= false;

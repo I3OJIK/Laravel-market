@@ -50,6 +50,7 @@ class AddProduct extends Component
             'description' => $this->description,
             'price' => $this->price,
             'image_url' => $imagePath,
+            'category_id' => $this->categoryId,
         ]);
         
         $this->product->subcategories()->sync($this->subcategoryIds); //sync удаляет все кроме того что есть в массиве и добавит новые
