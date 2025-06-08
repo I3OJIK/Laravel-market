@@ -1,5 +1,8 @@
 <div class="bg-gray-100 dark:bg-gray-800 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        @if (session()->has('message'))
+        <p class="">{{ session('message')}}</p>
+        @endif
         <div class="flex flex-col md:flex-row -mx-4">
             <div class="md:flex-1 px-4">
                 <div class="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
@@ -16,10 +19,11 @@
                 </div>
                 <div class="flex -mx-2 mb-4">
                     <div class="w-1/2 px-2">
-                        @if ($existingItem) 
+                        
+                        @if ($cartItem) 
                             <div class="relative flex items-center max-w-[8rem]">
                                 <button 
-                                    wire:click="decrementQuantity"
+                                    wire:click="changeQuantity(-1)"
                                     type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-900 dark:bg-gray-600 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-800 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                         <svg class="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
@@ -30,7 +34,7 @@
                                     {{ $quantity }}
                                 </div>
                                 <button 
-                                    wire:click="incrementQuantity"
+                                    wire:click="changeQuantity(+1)"
                                     type="button" id="increment-button" data-input-counter-increment="quantity-input" class="bg-gray-900 dark:bg-gray-600 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-800 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                                         <svg class="w-3 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>

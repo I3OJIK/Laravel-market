@@ -51,3 +51,6 @@ php artisan make:livewire Admin.AddCategory
 php artisan make:livewire Admin.OrdersIndex
 docker ps
 exit
+php artisan make
+php artisan make:service CartService
+exit
