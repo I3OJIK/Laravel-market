@@ -1,0 +1,51 @@
+<?php
+namespace App\Services;
+
+use App\Models\CartItem;
+use App\Models\ColorProduct;
+use Illuminate\Support\Facades\Auth;
+
+class CartService
+{
+    //если данный товар или товар с данным цветом есть в корзине выведет его, иначе null
+    public function getExistingCartItem($productId, $colorProductId = null)
+    {
+        return CartItem::where('user_id', Auth::id())
+            ->where('product_id', $productId)
+            ->when($colorProductId, fn($q) => $q->where('color_product_id', $colorProductId))
+            ->with('colorProduct')
+            ->first();
+    }
+    
+    // обновление количества товара в корзине
+    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta): void  // : void - функция нчиего не возвращает
+    {
+        // элемент у кторого изменяется Quantity
+        $item = $this->getExistingCartItem($productId, $colorProductId);
+        
+        // если элемент не найден закончить 
+        if (!$item) {
+            return;
+        }
+
+        // проверка для избежания превышения количетсва товра в корзине от количетсва товара на складе
+        if ($delta === 1 && $item->colorProduct->stock > $item->quantity) {
+            $item->increment('quantity');
+        } elseif ($delta === -1 && $item->quantity > 1) {
+            $item->decrement('quantity');
+        }
+    }
+
+    // создание или обновление элемента корзины
+    public function addOrUpdateCartItem($productId, $colorProductId, $quantity)
+    {
+        return CartItem::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'product_id' => $productId,
+                'color_product_id' => $colorProductId,
+            ],
+            ['quantity' => $quantity]
+        );
+    }
+}
