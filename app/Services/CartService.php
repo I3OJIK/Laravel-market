@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\CartItem;
 use App\Models\ColorProduct;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CartService
@@ -18,7 +19,7 @@ class CartService
     }
     
     // обновление количества товара в корзине
-    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta): void  // : void - функция нчиего не возвращает
+    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta) // : void - функция нчиего не возвращает
     {
         // элемент у кторого изменяется Quantity
         $item = $this->getExistingCartItem($productId, $colorProductId);
@@ -34,6 +35,7 @@ class CartService
         } elseif ($delta === -1 && $item->quantity > 1) {
             $item->decrement('quantity');
         }
+        return $item->quantity;
     }
 
     // создание или обновление элемента корзины
@@ -48,4 +50,21 @@ class CartService
             ['quantity' => $quantity]
         );
     }
+
+    public function getUserCartItems(int $userId)
+    {
+        return CartItem::with(['product', 'colorProduct'])
+            ->where('user_id', $userId)
+            ->get();
+            
+    }
+
+    public function deleteCartItems(int $userId, array $CartItems): void
+    {
+        $items = $this->getUserCartItems($userId);
+        // Удаляем модели из базы
+        $items->whereIn('id', $CartItems)->each->delete(); //whereNotIn - удаляет из коллекции строки с айди находящимеся в массиве selectedCartItems
+
+    }
+
 }

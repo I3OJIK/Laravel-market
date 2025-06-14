@@ -57,7 +57,6 @@ class ProductIndex extends Component
     {
         // получение пивот записи с выбранным цветом
         $this->selectedColorProduct = $this->colorService->getColorProduct($this->selectedProduct->id, $colorId);
-
         $this->colorProductStock = $this->selectedColorProduct->stock;
 
         // Проверяем, есть ли в корзине этот товар именно с этим pivot-id
@@ -68,12 +67,11 @@ class ProductIndex extends Component
     // изменение количества товара в коризне
     public function changeQuantity(int $action)
     {
-        $this->cartService->changeCartItemQuantity(
+        $this->quantity = $this->cartService->changeCartItemQuantity(
             $this->selectedProduct->id,
             $this->selectedColorProduct->id,
             $action,
         );
-        $this->loadCartItem();
     }
 
     // добавление товара в корзину

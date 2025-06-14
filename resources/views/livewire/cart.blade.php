@@ -82,9 +82,9 @@
                                             <div class="flex items-center">
 
                                                 @if ($cartItem->colorProduct->stock > 0)
-                                                    <button  wire:click="decrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 mr-2">-</button>
+                                                    <button  wire:click="changeQuantity({{$cartItem->id}}, -1)" class="border rounded-md py-2 px-4 mr-2">-</button>
                                                     <span class="text-center w-8">{{$cartItem->quantity}}</span>
-                                                    <button wire:click="incrementQuantity({{$cartItem->id}})" class="border rounded-md py-2 px-4 ml-2">+</button>
+                                                    <button wire:click="changeQuantity({{$cartItem->id}}, 1)" class="border rounded-md py-2 px-4 ml-2">+</button>
                                                         
                                                 @else
                                                    <p>Товар закончился🥺</p> 
@@ -222,32 +222,32 @@
             <label class="block font-semibold mb-1">Адрес доставки:</label>
             <input
                 type="text"
-                wire:model="addressString"
+                wire:model="addressData.address_text"
                 wire:focus="AddressinputFocused"
                 wire:blur="AddressinputBlur"
                 class=" peer  w-full items-center border border-gray-300 hover:placeholder-gray-800  rounded px-3 py-2 mb-4 "
                 placeholder="Введите адрес..."
             >
                     @if(!empty($suggestions))
-                 <ul class="mt-2 border bg-white shadow-lg {{ $showAddressesExample ? '' : 'hidden' }}"> {{--показывать примеры адресов если инпут выбран --}}
+                 <ul class="mt-2 border bg-white shadow-lg {{ $showSuggestions? '' : 'hidden' }}"> {{--показывать примеры адресов если инпут выбран --}}
                     @foreach($suggestions as $suggestion)
-                        <li  wire:click="selectExampleAddress('{{ $suggestion['subtitle'] ? $suggestion['subtitle'] . ', ' : '' }}{{ $suggestion['title'] }}')"
+                        <li  wire:click="selectSuggestion('{{ $suggestion['subtitle'] ? $suggestion['subtitle'] . ', ' : '' }}{{ $suggestion['title'] }}')"
                         class="px-4 py-2 cursor-pointer hover:bg-gray-100">{{ $suggestion['subtitle'] ? $suggestion['subtitle'] . ', ' : '' }}{{ $suggestion['title'] }}</li>
                     @endforeach
                 </ul>
-                    @elseif(strlen($addressString) > 2)
+                    @elseif(strlen($addressData['address_text']) > 2)
                         <div class="mt-2 p-4 text-gray-500">Нет предложений</div>
                     @endif
 
                 {{-- открывает доп поля для адреса, срабатывает когда выбрали адрес (нажали на один из вариантов) --}}
-                @if ($showAddressesAddons && isset($addressString)) 
+                @if ($showAddressesAddons && isset($addressData['address_text'])) 
                 <div class="mb-4 flex inline-block justify-between">
-                    <input wire:model="apartment_number" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Кв./офис">
-                    <input wire:model="doorphone" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Домофон">
-                    <input wire:model="entrance" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Подъезд">
-                    <input wire:model="floor" type="text" class="w-1/5 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Этаж"> 
+                    <input wire:model="addressData.apartment_number" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Кв./офис">
+                    <input wire:model="addressData.doorphone" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Домофон">
+                    <input wire:model="addressData.entrance" type="text" class="w-1/5 mr-7 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Подъезд">
+                    <input wire:model="addressData.floor" type="text" class="w-1/5 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 " placeholder="Этаж"> 
                 </div>
-                <input wire:model="phone"   type="text" class="w-1/3 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 required"
+                <input wire:model="addressData.phone"   type="text" class="w-1/3 border border-gray-300 hover:placeholder-gray-800 rounded px-3 py-2 required"
                     placeholder="Номер телефона"
                     id="phone-mask"> 
                     @endif

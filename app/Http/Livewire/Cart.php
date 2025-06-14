@@ -2,11 +2,15 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Livewire\Rules\CartValidationRules;
 use App\Models\Address;
 use App\Models\CartItem;
 use App\Models\ColorProduct;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\CartService;
+use App\Services\AddressService;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
@@ -15,114 +19,105 @@ class Cart extends Component
 {
     public $cartItems; //все эл корзины пользоватлетя
     public $cartItem; //один элемент корзины
-    
+
     public $showCheckoutModal = false;
-    public $showAddressesExample = false;  //при тру показываются варианты введенного адреса 
+    public $showSuggestions  = false;  //при тру показываются варианты введенного адреса 
     public $showAddressesAddons = false;  //при тру показываются доп поля для адреса
-    
+
     public bool $selectAll = false; // свойство для чекбокса "выбрать все"
     public $suggestions = []; // массив предложений вариантов адреса
 
     // переменные для заказа
     public float $totalPrice = 0; // Общая сумма корзины
-    public $addressString = ''; //гл адресная строка
-    public array $selectedCartItems = []; //массив выбранных элементов корзины
-    public $apartment_number = '';
-    public $doorphone = '';
-    public $entrance = '';
-    public $floor = '';
-    public $phone = '';
+    public array $selectedCartItems = []; //массив выбранных элементов 
+    public array  $addressData = [
+        'address_text'     => '',
+        'apartment_number' => '',
+        'doorphone'        => '',
+        'entrance'         => '',
+        'floor'            => '',
+        'phone'            => '',
+    ];
+
     public $quantity; // колво товара в коризщне пользолвателя (одного товара) 
 
+    protected CartService $cartService;
+    protected AddressService $addressService;
+    protected OrderService $orderService;
+
+    public function boot(
+        CartService $cartService,
+        AddressService $addressService,
+        OrderService $orderService
+
+    ) {
+        $this->cartService = $cartService;
+        $this->addressService = $addressService;
+        $this->orderService = $orderService;
+    }
 
     public function mount()
     {
-        $this->cartItems = auth()->user()->cartItems; //все товары пользователя с данным id
+        $this->loadCartItems();
+    }
+
+    public function loadCartItems()
+    {
+        //все товары пользователя с данным id
+        $this->cartItems = $this->cartService->getUserCartItems(auth()->user()->id);
     }
 
     // метод при фокусе на  инпут ввода адреса доставки
     public function AddressinputFocused()
     {
-        $this->showAddressesExample = true;
+        $this->showSuggestions  = true;
     }
     // метод при снятии фокуса с  инпута ввода адреса доставки
     public function AddressinputBlur()
     {
-        $this->showAddressesExample = false;
+        $this->showSuggestions  = false;
     }
 
     // метод при выборе одного из вариантов адреса
-    public function selectExampleAddress($addressText)
+    public function selectSuggestion($suggestion)
     {
-        $this->addressString = $addressText;
-        $this->showAddressesExample = false; // закрываем строки с вариантами адресов
+        $this->addressData['address_text'] = $suggestion;
+        $this->showSuggestions = false; // закрываем строки с вариантами адресов
         $this->showAddressesAddons = true; // открываем доп поля для адреса и телефон
     }
 
-
-    public function updatedAddressString()
+    //вызывается при вводе в поле адреса, если введено больше 3 символов то вызывается функция для вывода предложений адресов
+    public function updatedAddressDataAddressText($value) // при обновлении в массиве AddressData по ключу AddressText
     {
-        // Проводим запрос к Yandex API, если текст больше 2 символов
-        if (strlen($this->addressString) > 3) {
-            $this->getSuggestions($this->addressString);
-        } else {
-            $this->suggestions = [];
+        //если запрос меньще 4 символов то выводим пустой массив
+        if (mb_strlen($value) < 4) {
+            return $this->suggestions = [];
         }
+
+        $this->suggestions = $this->addressService->getSuggestions($value)->toArray();
     }
 
-    public function getSuggestions($text)
+    public function deleteSelected()
     {
-        $apikey = '40e203c6-408e-4bb6-9cbc-275d9d67a54e';
-        $url = 'https://suggest-maps.yandex.ru/v1/suggest';
-
-        $response = Http::get($url, [
-            'apikey' => $apikey,
-            'text' => $text
-        ]);
-
-        if ($response->successful()) {
-            $results = $response->json()['results'] ?? [];
-    
-            // Очищаем и форматируем
-            $this->suggestions = collect($results)->map(function ($item) {
-                return [
-                    'title' => $item['title']['text'] ?? '',
-                    'subtitle' => $item['subtitle']['text'] ?? '',
-                ];
-            })->toArray();
-
-
-        } else {
-            $this->suggestions = [];
-        }
-    }
-    //удаление выбранных элементов
-    public function deleteSelected() 
-    {
-        if($this->selectedCartItems){
-            // Удаляем модели из базы
-            $this->cartItems->whereIn('id', $this->selectedCartItems)->each->delete(); //whereNotIn - удаляет из коллекции строки с айди находящимеся в массиве selectedCartItems
-            //values - пересобирает ключи массива
-             // Удаляем их из коллекции
-            $this->cartItems = $this->cartItems
-            ->whereNotIn('id', $this->selectedCartItems)
-            ->values();
+        if ($this->selectedCartItems) {
+            $this->cartService->deleteCartItems(auth()->user()->id, $this->selectedCartItems);
             $this->selectAll = false;
+            $this->loadCartItems();
             $this->updatedSelectedCartItems();
         }
     }
 
     //метод вызывается автоматически при изменении чекбокса (при вкл/выкл чекбокса "выбрать все")
-    public function updatedSelectAll($value) 
+    public function updatedSelectAll($value)
     {
         if ($value) {
             // выбираем только те товары, у которых stock > 0
             $this->selectedCartItems = $this->cartItems
-            ->filter(function ($item) {
-                return $item->colorProduct->stock > 0;
-            })
-            ->pluck('id')
-            ->toArray();
+                ->filter(function ($item) {
+                    return $item->colorProduct->stock > 0;
+                })
+                ->pluck('id')
+                ->toArray();
         } else {
             // снять выделение
             $this->selectedCartItems = [];
@@ -134,109 +129,55 @@ class Cart extends Component
     public function updatedSelectedCartItems()
     {
         $this->totalPrice = 0; // Сброс суммы
-        foreach ($this->selectedCartItems as $itemId){ //цикл по айдишнику выбранных элементов корзины
+        foreach ($this->selectedCartItems as $itemId) { //цикл по айдишнику выбранных элементов корзины
             $item = $this->cartItems->find($itemId); // $item - один из выбранных элементов корзины
-            if ($item){ //если элемент найден то колво умножается на прайс элемента
-                $this->totalPrice += $item->quantity * $item->product->price; 
+            if ($item) { //если элемент найден то колво умножается на прайс элемента
+                $this->totalPrice += $item->quantity * $item->product->price;
             }
-
         }
     }
 
-    public function incrementQuantity($id)
-    {  
+    public function changeQuantity(int $id, int $action)
+    {
         $this->cartItem = $this->cartItems->find($id); // выбираем из списка товаров корзины один
-        $this->quantity = $this->cartItem->quantity;        
-        if ($this->quantity < $this->cartItem->colorProduct->stock) { // проверка, что количество эл корзины данного цвета не превышает остатки товара на складе
-            $this->quantity++;
-            $this->cartItem->quantity = $this->quantity; // присвоение элементу корзины измененного значения количества
-            $this->cartItem->save(); //сохранение изменений элемента корзины
-        }
+        $this->cartService->changeCartItemQuantity(
+            $this->cartItem->product_id,
+            $this->cartItem->color_product_id,
+            $action,
+        );
+        $this->loadCartItems();
         $this->updatedSelectedCartItems(); // при изменении количества товара вызывается функция общей стоимости корзины    
     }
-    
-
-    public function decrementQuantity($id)
-    {
-            $this->cartItem = $this->cartItems->find($id); // выбираем из списка товаров корзины один
-            $this->quantity = $this->cartItem->quantity;
-            if ($this->quantity > 1){ 
-                $this->quantity--;
-                $this->cartItem->quantity = $this->quantity; // присвоение элементу корзины измененного значения количества
-                $this->cartItem->save(); //сохранение изменений элемента корзины
-            }   
-            $this->updatedSelectedCartItems(); // при изменении количества товара вызывается функция общей стоимости корзины    
-    }
-    
-    
 
     //подтверждение заказа
-    function OrderConfirm() {
-        $this->validate([
-            'apartment_number' => 'required|string|min:3',
-            'doorphone' => 'required|min:1',
-            'entrance' => 'required|min:1',
-            'floor' => 'required|min:1',
-            'phone' => 'required|min:5',
-            'addressString' => 'required|string|min:5',
-            'totalPrice' => 'required|min:1',
-        ]);
+    function OrderConfirm()
+    {
+        $this->validate(array_merge(
+            CartValidationRules::address(),
+            CartValidationRules::cart()
+        ));
 
-        //созхранение адреса
-        $address = Address::create([
-            'user_id' =>auth()->user()->id,
-            'phone' => $this->phone,
-            'address_text' => $this->addressString,
-            'apartment_number' => $this->apartment_number,
-            'doorphone' => $this->doorphone,
-            'entrance' => $this->entrance,
-            'floor' => $this->floor,
-        ]);
+        $order = $this->orderService->placeOrder(
+            auth()->user()->id,
+            $this->addressData,
+            $this->selectedCartItems,
+            $this->totalPrice,
+            $this->addressService,
+            $this->cartService
+        );
 
-        // сохранение заказа
-        $order = Order::create([
-            'user_id' => auth()->user()->id,
-            'address_id' => $address->id,
-            'total_price' => $this->totalPrice,
-
-        ]);
-
-        // сохранение элементов заказа
-        $selectedItems = CartItem::whereIn('id', $this->selectedCartItems)->get();
-        foreach ($selectedItems as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product->id,
-                'color_id' => $item->colorProduct->color_id,
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
-            ]);
-
-           // Обновление остатка в таблице колос продукт
-            $colorProduct = $item->colorProduct;
-            $colorProduct->stock -= $item->quantity;
-            $colorProduct->save();
-         }
-        //  удаляем из корзины выбранные элементы
-         CartItem::whereIn('id', $this->selectedCartItems)->delete();
-         // обновляем массив элементов корзины
-         $this->cartItems = $this->cartItems->whereNotIn('id', $this->selectedCartItems)->values();
-          //  Очищаем форму, закрываем модалку и показываем сообщение
+        //  Очищаем форму, закрываем модалку и показываем сообщение
         $this->reset([
-            'apartment_number',
-            'doorphone',
-            'entrance',
-            'floor',
-            'phone',
-            'addressString',
+            'addressData',
             'selectedCartItems',
             'totalPrice',
         ]);
-        // Удаляем только те ColorProduct, где stock <= 0
-        // ColorProduct::where('stock', '<=', 0)->delete();
-        $this->showCheckoutModal = false;
-
-        $this->dispatchBrowserEvent('order-success');
+        //если заказ успешно создан закрываем модалку 
+        if ($order) {
+            $this->showCheckoutModal = false;
+            $this->dispatchBrowserEvent('order-success');
+            $this->loadCartItems();
+        }
     }
 
     public function render()
