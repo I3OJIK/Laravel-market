@@ -3,67 +3,90 @@
 namespace App\Http\Livewire;
 
 use App\Models\Order;
-use App\Models\User;
+use Illuminate\Support\Collection;
 use Livewire\Component;
-use Illuminate\Http\Request;
 
+
+/**
+ * Компонент Livewire для отображения списка заказов.
+ * 
+ * Функции:
+ * - Фильтрация по статусу
+ * - Удаление заказа
+ *
+ * @property bool $showModal Видимость модального окна удаления заказа
+ * @property int|null $selectedOrderIdDelete id выбранного для удаления товара
+ * @property string $activeFilter фильтр заказов по статусу (например 'all', 'pending')
+ */
 class Orders extends Component
 {
-    public $orders; //все заказы данного пользовталея
-    public $showModal = false; //для модального окна
+    public bool $showModal = false; //для модального окна
     public $selectedOrderIdDelete; //для модального окна
-    public $activeFilter = 'all'; // По умолчанию активна вкладка "All Order"
+    public string $activeFilter = 'all'; // По умолчанию активна вкладка "All Order"
 
 
-    public function mount()
+    /**
+     * Получение заказов текущего пользователя с применением фильтра по статусу.
+     * Это computed-свойство, вызывается при вызове к $this->orders
+     * 
+     * @return Collection
+     */
+    public function getOrdersProperty(): Collection
     {
-        $this->orders = auth()->user()->orders; //все заказы пользователя с данным id
-        
-    }
+        // все заказы пользователя
+        $query = Order::where('user_id', auth()->id());
 
-    // фильтрация заказов
-    public function filterOrders($status)
-    {
-         $this->activeFilter = $status; // для подсвечивания выбранного статуса на странице
-        // $this->orders = auth()->user()->orders
-        //     ->filter(function($order) use ($status){
-        //         return $status == 'all' || $order->status === $status; // если  status = all выводит все
-        //     });
-        
-        $id =  auth()->user()->id;
-        $user =  User::find($id);
-        $query = $user->orders(); 
-        
-        if ($status !== 'all') {
-            $query->where('status', $status);
+        // Если фильтр по статусу — добавляем условие
+        if ($this->activeFilter !== 'all') {
+            $query->where('status', $this->activeFilter);
         }
-        $this->orders = $query->get();
-    }
-    // Загружаем заказы пользователя
-    public function loadOrders()
-    {
-        $this->orders = auth()->user()->orders;
+        // Возвращаем коллекцию
+        return $query->get();
     }
 
-    //выщзывается при нажатии удалить заказ, для сохранения айди и открытия модального окна
-    public function preventDelete($id)
+    /**
+     * Передает статус для фильтрации в свойство - activeFilter
+     * 
+     * @param string $status
+     * 
+     * @return void
+     */
+    public function filterOrders(string $status): void
+    {
+        $this->activeFilter = $status; 
+    }
+
+    /**
+     * Подготавливает модальное окно для удаления заказа
+     * Сохраняет ID выбранного заказа и открывает окно
+     * 
+     * @param int $id
+     * 
+     * @return void
+     */
+    public function preventDelete(int $id): void
     {
         $this->selectedOrderIdDelete = $id;
         $this->showModal = true;
-        
     }
 
-    public function deleteOrder()
+    /**
+     * Удаление заказа
+     * 
+     * @return void
+     */
+    public function deleteOrder(): void
     {
         $order = Order::find($this->selectedOrderIdDelete);
         if ($order) {
             $order->delete();
             $this->showModal = false;
-            $this->loadOrders(); // Обновляем список заказов
         }
     }
     public function render()
     {
-        return view('livewire.orders');
+        return view('livewire.orders',[
+            'orders' => $this->orders
+        ]);
     }
 }
