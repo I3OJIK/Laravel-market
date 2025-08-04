@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
+/**
+ * [Description Cart]
+ */
 class Cart extends Component
 {
     public $cartItems; //все эл корзины пользоватлетя
@@ -41,8 +44,17 @@ class Cart extends Component
 
     public $quantity; // колво товара в коризщне пользолвателя (одного товара) 
 
+    /**
+     * @var CartService
+     */
     protected CartService $cartService;
+    /**
+     * @var AddressService
+     */
     protected AddressService $addressService;
+    /**
+     * @var OrderService
+     */
     protected OrderService $orderService;
 
     public function boot(
@@ -56,12 +68,20 @@ class Cart extends Component
         $this->orderService = $orderService;
     }
 
+    /**
+     * @return [type]
+     */
     public function mount()
     {
         $this->loadCartItems();
     }
 
-    public function loadCartItems()
+    /**
+     * Загружает все товары, находящиес в корзине данного пользователя
+     * 
+     * @return void
+     */
+    public function loadCartItems():void
     {
         //все товары пользователя с данным id
         $this->cartItems = $this->cartService->getUserCartItems(auth()->user()->id);
@@ -79,6 +99,12 @@ class Cart extends Component
     }
 
     // метод при выборе одного из вариантов адреса
+
+    /**
+     * @param mixed $suggestion
+     * 
+     * @return [type]
+     */
     public function selectSuggestion($suggestion)
     {
         $this->addressData['address_text'] = $suggestion;
@@ -87,7 +113,12 @@ class Cart extends Component
     }
 
     //вызывается при вводе в поле адреса, если введено больше 3 символов то вызывается функция для вывода предложений адресов
-    public function updatedAddressDataAddressText($value) // при обновлении в массиве AddressData по ключу AddressText
+    /**
+     * @param string $value
+     * 
+     * @return [type]
+     */
+    public function updatedAddressDataAddressText(string $value) // при обновлении в массиве AddressData по ключу AddressText
     {
         //если запрос меньще 4 символов то выводим пустой массив
         if (mb_strlen($value) < 4) {

@@ -4,27 +4,59 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Продукт
+ *
+ * @property int $id
+ * @property int $category_id
+ * @property string $name имя 
+ * @property string $description описаниие
+ * @property int $price цена
+ * @property string|null $image_url ссылка на фото
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property-read \App\Models\Category $category
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Subcategory[] $subcategories
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Color[] $colors
+ */
 class Product extends Model
 {
     protected $guarded =[];
     use SoftDeletes;
 
-    public function subcategories()
+    /**
+     * Получить все подкатегории, к которым относится продукт.
+     *
+     * @return BelongsToMany
+     */
+    public function subcategories(): BelongsToMany
     {
-        // одному продукту может принадлежать несколько подкатегорий
         return $this->belongsToMany(Subcategory::class);
     }
 
-    public function category()
+    /**
+     * Получить категорию, к которой относится продукт.
+     *
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
     {
         // одному продукту может принадлежать несколько подкатегорий
         return $this->belongsTo(Category::class);
     }
     
-    public function colors()
+     /**
+     * Получить все цвета, доступные для данного продукта.
+     *
+     * @return BelongsToMany
+     */
+    public function colors(): BelongsToMany
     {
-        // одному продукту может принадлежать несколько цветов
         return $this->belongsToMany(Color::class )
                     ->withPivot('stock');
     }

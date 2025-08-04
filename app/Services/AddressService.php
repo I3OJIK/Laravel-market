@@ -20,6 +20,16 @@ class AddressService
         $this->apiKey = env('YANDEX_SUGGEST_KEY');
     }
 
+    
+    /**
+     * Предлагает варианты адреса на основе введённой строки.
+     *
+     * Выполняет HTTP-запрос к внешнему API и возвращает коллекцию 
+     * отформатированных результатов с ключами `title` и `subtitle`.
+     *
+     * @param string $query Строка, по которой подбираются варианты адресов
+     * @return Collection Коллекция с результатами подсказки
+     */
     public function getSuggestions(string $query)
     {
 

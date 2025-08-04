@@ -3,17 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\belongsTo;
 
+/**
+ * Пивот таблица Цвет-продукт (содержит строку с остатком товара данного цвета)
+ *
+ * @property int $id
+ * @property int $product_id
+ * @property int $color_id
+ * @property int $stock Остаток товара
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property-read \App\Models\Color $color
+ */
 class ColorProduct extends Model
 {
     protected $table = 'color_product';
     protected $guarded =[];
 
-    public function color()
+    /**
+     * Color, связанный с данной таблицей
+     * 
+     * @return belongsTo
+     */
+    public function color(): belongsTo
     {
-         // Определение связи с моделью Order (Один OrderItem принадлежит одному Order)
-        return $this->belongsTo(Color::class); // foreign_id в таблице order_items будет ссылаться на id в таблице orders
+        return $this->belongsTo(Color::class); 
     }
 
 }

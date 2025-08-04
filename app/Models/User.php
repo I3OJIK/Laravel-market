@@ -2,54 +2,78 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Пользователь
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $role
+ * @property string|null $remember_token
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property-read Collection|\App\Models\CartItem[] $cartItems
+ * @property-read Collection|\App\Models\Address[] $addresses
+ * @property-read Collection|\App\Models\Order[] $orders
+ */
 class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
     protected $fillable = [
         'name', 'email', 'password','role',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function cartItems()
+
+    /**
+     * Получить все элементы корзины пользователя.
+     * 
+     * @return HasMany
+     */
+    public function cartItems(): HasMany
     {
         //один пользователь может иметь несколько товаров в корзине
         return $this->hasMany(CartItem::class);
     }
     
-    public function addresses()
+    /**
+     * Получить все адреса пользователя.
+     * 
+     * @return HasMany
+     */
+    public function addresses(): HasMany
     {
         //один пользователь может иметь несколько адресов
         return $this->hasMany(Address::class);
     }
-    public function orders()
+
+    /**
+     * Получить все заказы пользователя.
+     * 
+     * @return HasMany
+     */
+    public function orders(): HasMany
     {
         //один пользователь может иметь несколько заказов
         return $this->hasMany(Order::class);

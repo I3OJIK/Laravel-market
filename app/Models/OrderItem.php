@@ -4,26 +4,58 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
+/**
+ * Элемент заказа 
+ *
+ * @property int $id
+ * @property int $order_id
+ * @property int $product_id
+ * @property int $color_id
+ * @property int $quantity Количество товара
+ * @property int $price цена
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property-read \App\Models\Order $order
+ * @property-read \App\Models\Product $product
+ * @property-read \App\Models\Color $color
+ */
 class OrderItem extends Model
 {
     use SoftDeletes;
     protected $guarded =[];
-    public function order()
+
+    /**
+     * Каждый OrderItem принадлежит одному заказу
+     *
+     * @return BelongsTo
+     */
+    public function order(): BelongsTo
     {
-         // Определение связи с моделью Order (Один OrderItem принадлежит одному Order)
-        return $this->belongsTo(Order::class); // foreign_id в таблице order_items будет ссылаться на id в таблице orders
+        return $this->belongsTo(Order::class); 
     }
 
-    public function product()
+     /**
+     * Каждый OrderItem принадлежит одному продукту
+     *
+     * @return BelongsTo
+     */
+    public function product(): BelongsTo
     {
-         // Определение связи с моделью Order (Один OrderItem принадлежит одному Product)
-        return $this->belongsTo(Product::class); // foreign_id в таблице order_items будет ссылаться на id в таблице products
+        return $this->belongsTo(Product::class);
     }
 
-    public function color()
+    /**
+     * Каждый OrderItem принадлежит одному цвету
+     *
+     * @return BelongsTo
+     */
+    public function color(): BelongsTo
     {
-       
         return $this->belongsTo(Color::class); 
     }
 }

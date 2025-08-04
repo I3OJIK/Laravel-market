@@ -4,7 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Class Order
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $address_id
+ * @property string $status статус заказа например (Processing)
+ * @property int $total_price Итоговая сумма заказа
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Address $address
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\OrderItem[] $orderItems
+ */
 class Order extends Model
 {
     use SoftDeletes;
@@ -14,30 +32,39 @@ class Order extends Model
     {
         parent::boot();
 
-        // При мягком удалении
-        static::deleting(function($order) {
+        // Обработка удаления связанных товаров заказа
+        static::deleting(function ($order) {
             if ($order->isForceDeleting()) {
-                // Полное удаление
-                $order->orderItems()->forceDelete();
+                $order->orderItems()->forceDelete(); // Полное удаление
             } else {
-                // Мягкое удаление
-                $order->orderItems()->delete();
+                $order->orderItems()->delete();      // Мягкое удаление
             }
         });
 
-        // При восстановлении
-        static::restoring(function($order) {
+        // При восстановлении заказа — восстановить и связанные товары
+        static::restoring(function ($order) {
             $order->orderItems()->restore();
         });
     }
-    
-    public function orderItems()
+
+    /**
+     * Получить позиции (orderItems), которые относятся к заказу
+     *
+     * @return HasMany
+     */
+    public function orderItems(): HasMany
     {
          // Определение связи с моделью OrderItem (Один Order может иметь несколько OrderItems)
         return $this->hasMany(OrderItem::class);// В заказе могут быть несколько товаров
     }
 
-    public function address()
+
+     /**
+     * Получить адресс который относится к заказу
+     *
+     * @return BelongsTo
+     */
+    public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
     }

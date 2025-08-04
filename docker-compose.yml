@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: laravel-app
     working_dir: /var/www
-    user: "${UID:-1000}:${GID:-1000}"  # 🔥 Важно: добавляем эту строку
+    user: "${UID:-1000}:${GID:-1000}"  
     volumes:
       - .:/var/www
     networks:
@@ -24,7 +24,7 @@ services:
     image: nginx:alpine
     container_name: nginx-container
     ports:
-      - "80:80"
+      - "81:81"
     volumes:
       - .:/var/www
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
