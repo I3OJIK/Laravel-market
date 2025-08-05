@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\belongsTo;
  */
 class CartItem extends Model
 {
-    use SoftDeletes;
     protected $guarded =[];
 
     /**

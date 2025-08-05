@@ -26,15 +26,28 @@ class CartService
             ->first();
     }
     
-    // обновление количества товара в корзине
-    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta) // : void - функция нчиего не возвращает
+    /**
+     * Изменяет количество товара в корзине.
+     *
+     * Увеличивает или уменьшает quantity элемента корзины,
+     * при условии, что:
+     * - увеличение не превышает остаток товара на складе;
+     * - уменьшение не опустится ниже 1.
+     *
+     * @param  int  $productId ID продукта.
+     * @param  int  $colorProductId ID связанного цвета (pivot таблица).
+     * @param  int  $delta +1 — увеличить, -1 — уменьшить количество.
+     * 
+     * @return int|null Новое значение quantity или null, если элемент не найден.
+     */
+    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta) : ?int
     {
         // элемент у кторого изменяется Quantity
         $item = $this->getExistingCartItem($productId, $colorProductId);
         
         // если элемент не найден закончить 
         if (!$item) {
-            return;
+            return null;
         }
 
         // проверка для избежания превышения количетсва товра в корзине от количетсва товара на складе
@@ -59,12 +72,18 @@ class CartService
         );
     }
 
-    public function getUserCartItems(int $userId)
+    /**
+     * Получить товары из корзины пользователя
+     * 
+     * @param int $userId
+     * 
+     * @return Collection
+     */
+    public function getUserCartItems(int $userId): Collection
     {
         return CartItem::with(['product', 'colorProduct'])
             ->where('user_id', $userId)
             ->get();
-            
     }
 
     public function deleteCartItems(int $userId, array $CartItems): void

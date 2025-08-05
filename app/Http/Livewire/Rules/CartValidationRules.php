@@ -7,7 +7,7 @@ class CartValidationRules
     public static function address(): array
     {
         return [
-            'addressData.apartment_number' => 'required|string|min:3',
+            'addressData.apartment_number' => 'required|string|min:1',
             'addressData.doorphone'        => 'required|min:1',
             'addressData.entrance'         => 'required|min:1',
             'addressData.floor'            => 'required|min:1',
@@ -20,7 +20,6 @@ class CartValidationRules
     {
         return [
             'selectedCartItems' => 'required|array|min:1',
-            'totalPrice'        => 'required|numeric|min:1',
         ];
     }
 }
