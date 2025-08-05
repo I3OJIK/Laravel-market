@@ -141,7 +141,7 @@ class ProductIndex extends Component
         if (!$this->colorProduct) {
             session()->flash('message', 'Выберите цвет');
             return;
-        }
+        } 
 
         $this->cartService->addOrUpdateCartItem(
             $this->selectedProduct->id,
