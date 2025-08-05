@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\CartItem;
+use App\Models\cartItem;
 use App\Models\ColorProduct;
 use App\Services\CartService;
 use App\Models\Product;
@@ -10,92 +10,152 @@ use App\Services\ColorProductService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
+/**
+ * Компонент Livewire оботражающий страницу продукта.
+ *
+ * Функии:
+ * - Загрузка выбранного продукта
+ * - Выбор цвета и количества
+ * - Добавление/обновление товара в корзине
+ *
+ * @property CartService $cartService Сервис работы с корзиной
+ * @property ColorProductService $colorService Сервис работы с pivot-записью color_product (остатки по цвету)
+ * @property Product|null $selectedProduct Выбранный продукт (модель Product)
+ * @property ColorProduct|null $selectedColorProduct selectedColorProduct
+ * @property int|null $selectedColorid ID выбранного цвета
+ * @property int|null $quantity Количество товара в корзине
+ */
 class ProductIndex extends Component
 {
     protected CartService $cartService;             // инициализация сервиса корзины
     protected ColorProductService $colorService;    // инициализация сервиса цветов
-
     public $selectedProduct;                        // выбранный продукт
-    public $cartItem;                               // элемент находящийся в корзине
-    public $colorProductStock;                      // остаток товара данного цвета
-    public $selectedColorProduct;                   // пивот таблицы выбранного цвета
-    public $selectedColorid;                        // айди выбранного цвета
+    public $selectedColorId;                        // айди выбранного цвета
     public $quantity;                               // количество товара в корзине   
 
 
-    public function boot(CartService $cartService, ColorProductService $colorService)
+    /**
+     * Инициализация сервисов через контейнер зависимостей
+     *
+     * @param CartService $cartService
+     * @param ColorProductService $colorService
+     */
+    public function boot(CartService $cartService, ColorProductService $colorService): void
     {
         $this->cartService = $cartService;
         $this->colorService = $colorService;
     }
 
-    public function mount($id)
+    /**
+     * Инициализация компонента при монтировании
+     *
+     * @param int $id ID продукта
+     */
+    public function mount(int $id): void
     {
         $this->selectedProduct = Product::with('colors')->find($id);
 
-        // Предустановка, если товар уже в корзине
-        $this->cartItem = $this->cartService->getExistingCartItem($this->selectedProduct->id);
-        //проверка есть ли товар в корзине 
-        if ($this->cartItem) {
-            $this->quantity = $this->cartItem->quantity;
-            $this->selectedColorProduct = $this->cartItem->colorProduct;
-            $this->colorProductStock = $this->cartItem->colorProduct->stock;
-            $this->selectedColorid = $this->cartItem->colorProduct->color_id;
+        if($item = $this->cartItem){
+            $this->selectedColorId = $item->colorProduct->color_id;
+            $this->quantity        = $item->quantity;
         }
+      
     }
-    public function loadCartItem()
+
+    /**
+     * Получить текущий товар в корзине пользователя.
+     *
+     * @return CartItem|null
+     */
+    public function getCartItemProperty(): ?CartItem
     {
-        $this->cartItem = $this->cartService->getExistingCartItem(
+        if (! $this->selectedProduct) {
+            return null;
+        }
+
+        return $this->cartService->getExistingCartItem(
             $this->selectedProduct->id,
-            $this->selectedColorProduct->id
+            $this->colorProduct ? $this->colorProduct->id : null
         );
-        $this->quantity = $this->cartItem->quantity ?? 1;
     }
 
-    // при выборе отпределенного цвета вызывается метод, присваивающий переменной остаток товара 
-    public function selectColor($colorId)
+    /**
+     * Получить Pivot-модель связи продукта и цвета.
+     *
+     * @return ColorProduct|null
+     */
+    public function getColorProductProperty(): ?ColorProduct
     {
-        // получение пивот записи с выбранным цветом
-        $this->selectedColorProduct = $this->colorService->getColorProduct($this->selectedProduct->id, $colorId);
-        $this->colorProductStock = $this->selectedColorProduct->stock;
+        if (! $this->selectedColorId) {
+            return null;
+        }
 
-        // Проверяем, есть ли в корзине этот товар именно с этим pivot-id
-        // Устанавливаем quantity: либо из корзины, либо дефолт (1)
-        $this->loadCartItem();
+        return $this->colorService->getColorProduct(
+            $this->selectedProduct->id,
+            $this->selectedColorId
+        );
     }
 
-    // изменение количества товара в коризне
-    public function changeQuantity(int $action)
+    /**
+     * Выбранный цвет товара
+     *
+     * @param int $colorId ID цвета
+     * 
+     * @return void
+     */
+    public function selectColor(int $colorId): void
+    {
+        $this->selectedColorId = $colorId;
+        $this->quantity = $this->cartItem ? $this->cartItem->quantity : 1;
+
+    }
+
+     /**
+     * Изменить количество товара
+     *
+     * @param int $action Действие (1 - увеличение, -1 - уменьшение)
+     * 
+     * @return void
+     */
+    public function changeQuantity(int $action): void
     {
         $this->quantity = $this->cartService->changeCartItemQuantity(
             $this->selectedProduct->id,
-            $this->selectedColorProduct->id,
+            $this->colorProduct->id,
             $action,
         );
     }
 
-    // добавление товара в корзину
-    public function addCartItem()
+    /**
+     * Добавить или обновить товар в корзине.
+     * 
+     * @return void
+     */
+    public function addCartItem(): void
     {
         if (!Auth::check()) {
-            return redirect()->route('login');
+            redirect()->route('login');
+            return;
         }
 
-        if (!$this->selectedColorProduct) {
+        if (!$this->colorProduct) {
             session()->flash('message', 'Выберите цвет');
             return;
         }
+
         $this->cartService->addOrUpdateCartItem(
             $this->selectedProduct->id,
-            $this->selectedColorProduct->id,
+            $this->colorProduct->id,
             $this->quantity
         );
         // обновление элемента корзины
-        $this->loadCartItem();
     }
 
     public function render()
     {
-        return view('livewire.product-index');
+        return view('livewire.product-index',[
+            'cartItem'=>$this->cartItem,
+            'colorProduct'=>$this->colorProduct,
+        ]);
     }
 }

@@ -44,17 +44,9 @@ class Cart extends Component
 
     public $quantity; // колво товара в коризщне пользолвателя (одного товара) 
 
-    /**
-     * @var CartService
-     */
+ 
     protected CartService $cartService;
-    /**
-     * @var AddressService
-     */
     protected AddressService $addressService;
-    /**
-     * @var OrderService
-     */
     protected OrderService $orderService;
 
     public function boot(
@@ -68,9 +60,6 @@ class Cart extends Component
         $this->orderService = $orderService;
     }
 
-    /**
-     * @return [type]
-     */
     public function mount()
     {
         $this->loadCartItems();
@@ -100,11 +89,7 @@ class Cart extends Component
 
     // метод при выборе одного из вариантов адреса
 
-    /**
-     * @param mixed $suggestion
-     * 
-     * @return [type]
-     */
+
     public function selectSuggestion($suggestion)
     {
         $this->addressData['address_text'] = $suggestion;
@@ -113,11 +98,7 @@ class Cart extends Component
     }
 
     //вызывается при вводе в поле адреса, если введено больше 3 символов то вызывается функция для вывода предложений адресов
-    /**
-     * @param string $value
-     * 
-     * @return [type]
-     */
+
     public function updatedAddressDataAddressText(string $value) // при обновлении в массиве AddressData по ключу AddressText
     {
         //если запрос меньще 4 символов то выводим пустой массив

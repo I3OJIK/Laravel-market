@@ -63,7 +63,7 @@
                         <span class="text-gray-600 dark:text-gray-300">₽{{$selectedProduct->price}}</span>
                     </div>
                     <div>
-                        <span class="font-bold text-gray-700 dark:text-gray-300">Availability: {{ $colorProductStock ? $colorProductStock : 'N/A' }}</span>
+                        <span class="font-bold text-gray-700 dark:text-gray-300">Availability: {{ $colorProduct ? $colorProduct->stock : 'N/A' }}</span>
                         <span class="text-gray-600 dark:text-gray-300"></span>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                                         wire:click="selectColor({{$color->id }})"
                                         value="{{ $color->id }}"
                                         class="sr-only peer"
-                                        {{ $selectedColorid == $color->id ? 'checked' : null}}
+                                        {{ $selectedColorId == $color->id ? 'checked' : null}}
                                     >
                                     <div class="
                                         w-8 h-8 rounded-full

@@ -9,7 +9,15 @@ use Illuminate\Support\Facades\Auth;
 class CartService
 {
     //если данный товар или товар с данным цветом есть в корзине выведет его, иначе null
-    public function getExistingCartItem($productId, $colorProductId = null)
+    /**
+     * Выводит модель CartItem с определенным productId и colorProductId (если указан)
+     * 
+     * @param int $productId
+     * @param int|null|null $colorProductId
+     * 
+     * @return null|CartItem
+     */
+    public function getExistingCartItem(int $productId, $colorProductId = null): ?CartItem
     {
         return CartItem::where('user_id', Auth::id())
             ->where('product_id', $productId)
