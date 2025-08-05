@@ -9,15 +9,35 @@ use App\Models\Subcategory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * Компонент Livewire для добавления нового товара в админке.
+ *
+ * Позволяет выбрать категорию, подкатегории, цвета, указать остаток и загрузить изображение.
+ * 
+ * @property string|null $name Название товара 
+ * @property string|null $description Описание товара 
+ * @property int|null $price Цена товара 
+ * @property int|null $categoryId Id категории товара 
+ * @property array $subcategoryIds Массив ID выбранных подкатегорий 
+ * @property Collection|null $subcategories Подкатегории, относящиеся к выбранной категории
+ * @property array $colorStocks Массив вида [color_id => stock]
+ * @property Collection $allCategories Все категории
+ * @property Collection $allSubcategories Все подкатегории
+ * @property Collection $allColors Все цвета
+ * @property UploadedFile|null $image Загруженное изображение
+ * @property Product $product  Созданный товар после сохранения
+ */
 class AddProduct extends Component
 {
     use WithFileUploads;
 
-    public $name, $description, $price;
-    public $categoryId ;
-    public $subcategoryIds = [];
+    public ?string $name;
+    public ?string $description;
+    public ?int $price;
+    public ?int $categoryId ;
+    public array $subcategoryIds = [];
     public $subcategories;
-    public $colorStocks = []; // [color_id => stock]
+    public array $colorStocks = []; // [color_id => stock]
 
     public $allCategories;
     public $allSubcategories;
@@ -25,21 +45,39 @@ class AddProduct extends Component
     public $image;
     public $product;
 
-    public function mount()
+
+    /**
+     * Инициализация компонента.
+     *
+     * Загружает все категории, подкатегории и цвета.
+     *
+     * @return void
+     */
+    public function mount(): void
     {
         $this->allCategories = Category::all();
         $this->allSubcategories = Subcategory::all();
         $this->allColors = Color::all();
         $this->updatedCategoryId();
     }
-    //при выборе категории подгружает ее подкатегории
-    public function updatedCategoryId()
+    
+    /**
+     * Обновляет список подкатегорий при изменении категории.
+     *
+     * @return void
+     */
+    public function updatedCategoryId(): void
     {
         $this->subcategories =$this->allSubcategories->where('category_id',$this->categoryId );
         $this->subcategoryIds =[];
     }
 
-    public function create()
+    /**
+     * Создает товар и сохраняет изображение, связи с подкатегориями и цветами.
+     *
+     * @return void
+     */
+    public function create(): void
     {
         // Сохраняем в storage/app/public/images
         $imagePath = $this->image->store('images', 'public');
