@@ -40,10 +40,12 @@ class CartService
      * 
      * @return int|null Новое значение quantity или null, если элемент не найден.
      */
-    public function changeCartItemQuantity(int $productId, int $colorProductId, int $delta) : ?int
+    public function changeCartItemQuantity(int $userId, int $productId, int $colorProductId, int $delta) : ?int
     {
-        // элемент у кторого изменяется Quantity
-        $item = $this->getExistingCartItem($productId, $colorProductId);
+        $item = CartItem::where('user_id', $userId)
+                        ->where('product_id', $productId)
+                        ->where('color_product_id', $colorProductId)
+                        ->first();
         
         // если элемент не найден закончить 
         if (!$item) {
@@ -60,8 +62,10 @@ class CartService
     }
 
     // создание или обновление элемента корзины
-    public function addOrUpdateCartItem($productId, $colorProductId, $quantity)
+    public function addOrUpdateCartItem($productId, $colorProductId, $quantity) : ?CartItem
     {
+
+
         return CartItem::updateOrCreate(
             [
                 'user_id' => Auth::id(),
@@ -86,12 +90,29 @@ class CartService
             ->get();
     }
 
-    public function deleteCartItems(int $userId, array $CartItems): void
+    public function deleteCartItems(int $userId, array $itemIds): void
     {
         $items = $this->getUserCartItems($userId);
         // Удаляем модели из базы
-        $items->whereIn('id', $CartItems)->each->delete(); //whereNotIn - удаляет из коллекции строки с айди находящимеся в массиве selectedCartItems
+        $items->whereIn('id', $itemIds)->each->delete(); //whereNotIn - удаляет из коллекции строки с айди находящимеся в массиве selectedCartItems
 
+    }
+
+    /**
+     * Рассчитывает общую стоимость для выбранных товаров
+     * 
+     * @param int $userId 
+     * @param array $itemIds массив id 
+     * 
+     * @return float
+     */
+    public function calculateSelectedItemsTotal(int $userId, array $itemIds): float
+    {
+        return CartItem::where('user_id', $userId)
+            ->whereIn('id', $itemIds)
+            ->with(['product'])
+            ->get()
+            ->sum(fn(CartItem $item) => $item->quantity * $item->product->price);
     }
 
 }

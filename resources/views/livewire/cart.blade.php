@@ -19,7 +19,7 @@
                         <!-- Правая часть: Удалить выбранные -->
                         <button
                             wire:click="deleteSelected"
-                            class="px-4 py-1 text-sm bg-white hover:bg-gray-100  rounded-lg {{$selectedCartItems ? '' : 'pointer-events-none'}}"
+                            class="px-4 py-1 text-sm bg-white hover:bg-gray-100  rounded-lg {{$selectedCartItemIds ? '' : 'pointer-events-none'}}"
                         >
                             Удалить выбранные
                         </button>
@@ -57,7 +57,7 @@
                                                         <input
                                                         id="default-checkbox"
                                                         type="checkbox"
-                                                        wire:model="selectedCartItems"
+                                                        wire:model="selectedCartItemIds"
                                                         value = "{{$cartItem->id}}"
                                                         class="absolute top-0 left-0 w-4 h-4 m-1 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
                                                         >
@@ -108,7 +108,7 @@
                                 <!-- Product name and checkbox -->
                                 <div class="flex items-center mb-2">
                                     <input type="checkbox"
-                                        wire:model="selectedCartItems"
+                                        wire:model="selectedCartItemIds"
                                         value="{{ $cartItem->id }}"
                                         class="mr-2 w-4 h-4">
                                     <span class="font-semibold text-gray-900">{{ $cartItem->Product->name }}</span>
@@ -183,7 +183,7 @@
                     </div>
                     <button 
                         wire:click="$set('showCheckoutModal', true)"
-                        @if(! count($selectedCartItems)) disabled @endif
+                        @if(! count($selectedCartItemIds)) disabled @endif
                         class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
                         >Checkout</button>
                 </div>
@@ -202,8 +202,8 @@
 
         <div class="mb-4 max-h-64 overflow-y-auto">
             <ul>
-                {{-- выбирает только те элементы которые имеют айди как в selectedCartItems --}}
-                @foreach($cartItems->whereIn('id', $selectedCartItems) as $item)
+                {{-- выбирает только те элементы которые имеют айди как в selectedCartItemIds --}}
+                @foreach($cartItems->whereIn('id', $selectedCartItemIds) as $item)
                     <li class="mb-2">
                         <span class="font-semibold">{{ $item->product->name }}</span> —  
                         {{$item->colorProduct->color->name}}

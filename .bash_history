@@ -55,3 +55,8 @@ php artisan make
 php artisan make:service CartService
 exit
 exit
+exit
+php artisan make:controller Api/CartController
+php artisan --version
+php artisan make:resource CartItemResource
+exit

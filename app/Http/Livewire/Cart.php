@@ -28,7 +28,22 @@ use Livewire\Component;
  * - Подтверждение заказа
  * 
  * 
- * @property mixed $name
+ * @property Collection $cartItems Список товаров в корзине (вычисляемое свойство)
+ * @property float $totalPrice Общая сумма выбранных товаров (вычисляемое свойство)
+ * @property CartItem|null $cartItem Конкретный товар в корзине
+ * @property bool $showCheckoutModal Флаг отображения модального окна оформления заказа
+ * @property bool $showSuggestions Флаг отображения подсказок адреса
+ * @property bool $showAddressesAddons Флаг отображения дополнительных полей адреса
+ * @property bool $selectAll Флаг "Выбрать все" товары
+ * @property array $suggestions Список подсказок адреса
+ * @property array $selectedCartItemIds Массив ID выбранных товаров
+ * @property array $addressData Данные адреса доставки:
+ *   - string $address_text Основной текст адреса
+ *   - string $apartment_number Номер квартиры
+ *   - string $doorphone Код домофона
+ *   - string $entrance Подъезд
+ *   - string $floor Этаж
+ *   - string $phone Телефон для связи
  */
 class Cart extends Component
 {
@@ -40,7 +55,7 @@ class Cart extends Component
     public array $suggestions = []; // массив предложений вариантов адреса
 
     // переменные для заказа
-    public array $selectedCartItems = []; //массив выбранных элементов 
+    public array $selectedCartItemIds = []; //массив выбранных элементов 
     public array  $addressData = [
         'address_text'     => '',
         'apartment_number' => '',
@@ -87,10 +102,7 @@ class Cart extends Component
      */
     public function getTotalPriceProperty(): float
     {
-        return collect($this->selectedCartItems)
-            ->map(fn($id) => $this->cartItems->find($id))
-            ->filter()
-            ->sum(fn(CartItem $item) => $item->quantity * $item->product->price);
+        return $this->cartService->calculateSelectedItemsTotal(Auth::id(),$this->selectedCartItemIds);
     }
 
      /** Событие focus на поле адреса */
@@ -140,7 +152,7 @@ class Cart extends Component
       */
      public function updatedSelectAll(bool $value): void
      {
-         $this->selectedCartItems = $value
+         $this->selectedCartItemIds = $value
              ? $this->cartItems
                  ->filter(fn(CartItem $item) => $item->colorProduct->stock > 0)
                  ->pluck('id')
@@ -153,12 +165,12 @@ class Cart extends Component
       */
      public function deleteSelected(): void
      {
-         if (empty($this->selectedCartItems)) {
+         if (empty($this->selectedCartItemIds)) {
              return;
          }
-         $this->cartService->deleteCartItems(Auth::id(), $this->selectedCartItems);
+         $this->cartService->deleteCartItems(Auth::id(), $this->selectedCartItemIds);
          $this->selectAll          = false;
-         $this->selectedCartItems  = [];
+         $this->selectedCartItemIds  = [];
      }
  
      /**
@@ -170,7 +182,7 @@ class Cart extends Component
       */
      public function changeQuantity(int $productId, int $colorProductId, int $delta): void
      {
-         $this->cartService->changeCartItemQuantity($productId, $colorProductId, $delta);
+         $this->cartService->changeCartItemQuantity(Auth::id(), $productId, $colorProductId, $delta);
      }
  
      /**
@@ -186,7 +198,7 @@ class Cart extends Component
          $order = $this->orderService->placeOrder(
              Auth::id(),
              $this->addressData,
-             $this->selectedCartItems,
+             $this->selectedCartItemIds,
              $this->totalPrice,
              $this->addressService,
              $this->cartService
@@ -194,7 +206,7 @@ class Cart extends Component
         //  сброс computed свойств
          $this->forgetComputed();
          if ($order) {
-             $this->reset(['addressData', 'selectedCartItems',]);
+             $this->reset(['addressData', 'selectedCartItemIds',]);
              $this->showCheckoutModal = false;
              $this->dispatchBrowserEvent('order-success');
          }
