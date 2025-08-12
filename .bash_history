@@ -60,3 +60,17 @@ php artisan make:controller Api/CartController
 php artisan --version
 php artisan make:resource CartItemResource
 exit
+sudo chown -R www-data:www-data /var/www/storage
+chown -R www-data:www-data /var/www/storage
+chown -R $USER:www-data /var/www/storage
+exit
+chown -R www-data:www-data /var/www/storage
+composer install
+php artisan jwt:secret
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+composer require tymon/jwt-auth
+composer require tymon/jwt-auth:1.0.0
+composer install
+composer require tymon/jwt-auth:1.0.0
+exit

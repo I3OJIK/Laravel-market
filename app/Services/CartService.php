@@ -34,17 +34,15 @@ class CartService
      * - увеличение не превышает остаток товара на складе;
      * - уменьшение не опустится ниже 1.
      *
-     * @param  int  $productId ID продукта.
-     * @param  int  $colorProductId ID связанного цвета (pivot таблица).
+     * @param  int  $id ID элемента корзины.
      * @param  int  $delta +1 — увеличить, -1 — уменьшить количество.
      * 
      * @return int|null Новое значение quantity или null, если элемент не найден.
      */
-    public function changeCartItemQuantity(int $userId, int $productId, int $colorProductId, int $delta) : ?int
+    public function changeCartItemQuantity(int $userId, int $id, int $delta) : ?int
     {
         $item = CartItem::where('user_id', $userId)
-                        ->where('product_id', $productId)
-                        ->where('color_product_id', $colorProductId)
+                        ->where('id', $id)
                         ->first();
         
         // если элемент не найден закончить 
@@ -62,7 +60,15 @@ class CartService
     }
 
     // создание или обновление элемента корзины
-    public function addOrUpdateCartItem($productId, $colorProductId, $quantity) : ?CartItem
+    /**
+     * Обновление или добавление товара в корзину
+     *
+     * @param  int $productId 
+     * @param  int $colorProductId
+     * @param  int $quantity
+     * @return CartItem|null
+     */
+    public function addOrUpdateCartItem(int $productId,int  $colorProductId,int  $quantity) : ?CartItem
     {
 
 
@@ -90,6 +96,13 @@ class CartService
             ->get();
     }
 
+    /**
+     * Удаление из корзины продкутов по массиву их айди
+     *
+     * @param  integer $userId
+     * @param  array   $itemIds массив id продуктов в корзине
+     * @return void
+     */
     public function deleteCartItems(int $userId, array $itemIds): void
     {
         $items = $this->getUserCartItems($userId);

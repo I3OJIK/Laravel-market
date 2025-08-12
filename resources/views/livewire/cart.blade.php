@@ -82,9 +82,9 @@
                                             <div class="flex items-center">
 
                                                 @if ($cartItem->colorProduct->stock > 0)
-                                                    <button  wire:click="changeQuantity({{$cartItem->product_id}},{{$cartItem->color_product_id}}, -1)" class="border rounded-md py-2 px-4 mr-2">-</button>
+                                                    <button  wire:click="changeQuantity({{$cartItem->id}}, -1)" class="border rounded-md py-2 px-4 mr-2">-</button>
                                                     <span class="text-center w-8">{{$cartItem->quantity}}</span>
-                                                    <button wire:click="changeQuantity({{$cartItem->product_id}},{{$cartItem->color_product_id}}, 1)" class="border rounded-md py-2 px-4 ml-2">+</button>
+                                                    <button wire:click="changeQuantity({{$cartItem->id}}, 1)" class="border rounded-md py-2 px-4 ml-2">+</button>
                                                         
                                                 @else
                                                    <p>Товар закончился🥺</p> 

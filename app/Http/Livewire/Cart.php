@@ -176,13 +176,12 @@ class Cart extends Component
      /**
       * Изменение количества одного товара.
       *
-      * @param int $productId
-      * @param int $colorProductId
+      * @param int $id
       * @param int $delta         +1 или -1
       */
-     public function changeQuantity(int $productId, int $colorProductId, int $delta): void
+     public function changeQuantity(int $id, int $delta): void
      {
-         $this->cartService->changeCartItemQuantity(Auth::id(), $productId, $colorProductId, $delta);
+         $this->cartService->changeCartItemQuantity(Auth::id(), $id, $delta);
      }
  
      /**
