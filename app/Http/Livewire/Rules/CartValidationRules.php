@@ -19,7 +19,7 @@ class CartValidationRules
     public static function cart(): array
     {
         return [
-            'selectedCartItems' => 'required|array|min:1',
+            'selectedCartItemIds' => 'required|array|min:1',
         ];
     }
 }

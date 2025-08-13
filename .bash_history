@@ -74,3 +74,5 @@ composer require tymon/jwt-auth:1.0.0
 composer install
 composer require tymon/jwt-auth:1.0.0
 exit
+php artisan migrate:fresh --seed
+exit

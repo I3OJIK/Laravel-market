@@ -1,7 +1,16 @@
 <div class="  mt-2">
     <h2 class="text-2xl font-semibold mb-6">Добавить товар</h2>
     {{-- <img src="{{ asset('storage/images/7siLcX6LRAYNPxQ8HpWyyI2yYkIOBIiGdUdiG0p5.jpg') }}" alt="Фото товара"> --}}
-
+    @if (session()->has('success'))
+      <div class="bg-green-100 text-green-800 p-2 rounded">
+          {{ session('success') }}
+      </div>
+    @endif
+    @if (session()->has('error'))
+      <div class="bg-red-100 text-red-800 p-2 rounded">
+          {{ session('error') }}
+      </div>
+    @endif
     <form wire:submit.prevent="create" class="space-y-6" enctype="multipart/form-data">
       {{-- Название --}}
       <div>

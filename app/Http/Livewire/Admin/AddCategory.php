@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Category;
 use App\Models\Subcategory;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 /**
@@ -18,11 +19,12 @@ use Livewire\Component;
  */
 class AddCategory extends Component
 {   
-    public $categories;
+    public $categories = null;
     public string $optionAdd = 'sub'; //переменная для селектора выбора доабвления - категория или подкатегория
     public ?int $selectedCategoryId = null; // если выбрано добавление подкатегории сохраняет выбранную категорию к которой приклепляется
-    public ?string $subcategoryDescription; //описание для покдкатегории
-    public ?string $name; //имя новой категори/подкатегории
+    public ?string $subcategoryDescription = null; //описание для покдкатегории
+    public ?string $name = null; //имя новой категори/подкатегории
+
 
     /**
      * Создание новой подкатегории/ категории
@@ -31,18 +33,33 @@ class AddCategory extends Component
      */
     public function create(): void
     {
-        if ($this->optionAdd == 'sub'){
-            $subcategory = Subcategory::create([
-                'name' => $this->name,
-                'description' => $this->subcategoryDescription,
-                'category_id' => $this->selectedCategoryId,
+        try {
+            DB::transaction(function () {
+                if ($this->optionAdd == 'sub'){
+                    $subcategory = Subcategory::create([
+                        'name' => $this->name,
+                        'description' => $this->subcategoryDescription,
+                        'category_id' => $this->selectedCategoryId,
+                    ]);
+                }
+                else if ($this->optionAdd == 'cat'){
+                    $category = Category::create([
+                        'name' => $this->name,
+                    ]);
+                    
+                }
+            });
+            // Отправляем JS-событие
+            $this->dispatchBrowserEvent('toast', [
+                'type'    => 'success',
+                'message' => 'Запись успешно добавлена!',
             ]);
-        }
-        else if ($this->optionAdd == 'cat'){
-            $category = Category::create([
-                'name' => $this->name,
+            $this->reset(['name', 'subcategoryDescription', 'selectedCategoryId']);
+        } catch(\Throwable $e) {
+            $this->dispatchBrowserEvent('toast', [
+                'type'    => 'error',
+                'message' => 'Ошибка при добавлении. ' . $e->getMessage(),
             ]);
-            
         }
     }
 

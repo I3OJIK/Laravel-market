@@ -50,7 +50,7 @@ class CartController extends Controller
      */
      public function index()
     {
-        $cartItems = $this->cartService->getUserCartItems(2);
+        $cartItems = $this->cartService->getUserCartItems(Auth::id());
         
         return CartItemResource::collection($cartItems);
 

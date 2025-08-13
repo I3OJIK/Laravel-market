@@ -31,10 +31,10 @@ class AddProduct extends Component
 {
     use WithFileUploads;
 
-    public ?string $name;
-    public ?string $description;
-    public ?int $price;
-    public ?int $categoryId ;
+    public ?string $name = null;
+    public ?string $description = null;
+    public ?int $price = null;
+    public ?int $categoryId = null;
     public array $subcategoryIds = [];
     public $subcategories;
     public array $colorStocks = []; // [color_id => stock]
@@ -80,7 +80,13 @@ class AddProduct extends Component
     public function create(): void
     {
         // Сохраняем в storage/app/public/images
-        $imagePath = $this->image->store('images', 'public');
+        if ($this->image){
+            $imagePath = $this->image->store('images', 'public');
+        }
+        else {
+            session()->flash('error', 'Добавьте фото');
+            return;
+        }
 
         // Создаём товар
         $this->product = Product::create([
@@ -98,6 +104,9 @@ class AddProduct extends Component
                 $colorId => ['stock' => $stock]
             ]);
         }
+        $this->reset(['name', 'description', 'price', 'categoryId', 'subcategoryIds', 'colorStocks', 'image', 'product']);
+        session()->flash('success', 'Товар успешно добавлен!');
+
     }
     public function render()
     {

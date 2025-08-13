@@ -122,7 +122,6 @@ class ProductIndex extends Component
         $this->quantity = $this->cartService->changeCartItemQuantity(
             Auth::id(),
             $this->selectedProduct->id,
-            $this->colorProduct->id,
             $action,
         );
     }
