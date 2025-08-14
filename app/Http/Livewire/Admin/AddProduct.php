@@ -2,10 +2,12 @@
 
 namespace App\Http\Livewire\Admin;
 
+use App\Http\Requests\Admin\StoreProductRequest;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\Subcategory;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -20,7 +22,7 @@ use Livewire\WithFileUploads;
  * @property int|null $categoryId Id категории товара 
  * @property array $subcategoryIds Массив ID выбранных подкатегорий 
  * @property Collection|null $subcategories Подкатегории, относящиеся к выбранной категории
- * @property array $colorStocks Массив вида [color_id => stock]
+ * @property array $colorStocks Массив вида [color_id => ['stock' => stock]]
  * @property Collection $allCategories Все категории
  * @property Collection $allSubcategories Все подкатегории
  * @property Collection $allColors Все цвета
@@ -36,8 +38,8 @@ class AddProduct extends Component
     public ?int $price = null;
     public ?int $categoryId = null;
     public array $subcategoryIds = [];
-    public $subcategories;
-    public array $colorStocks = []; // [color_id => stock]
+    public $subcategories = null;
+    public array $colorStocks = []; 
 
     public $allCategories;
     public $allSubcategories;
@@ -58,7 +60,6 @@ class AddProduct extends Component
         $this->allCategories = Category::all();
         $this->allSubcategories = Subcategory::all();
         $this->allColors = Color::all();
-        $this->updatedCategoryId();
     }
     
     /**
@@ -79,34 +80,46 @@ class AddProduct extends Component
      */
     public function create(): void
     {
-        // Сохраняем в storage/app/public/images
-        if ($this->image){
-            $imagePath = $this->image->store('images', 'public');
-        }
-        else {
-            session()->flash('error', 'Добавьте фото');
-            return;
-        }
+        $request = new StoreProductRequest();
 
-        // Создаём товар
-        $this->product = Product::create([
-            'name' => $this->name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'image_url' => $imagePath,
-            'category_id' => $this->categoryId,
-        ]);
-        
-        $this->product->subcategories()->sync($this->subcategoryIds); //sync удаляет все кроме того что есть в массиве и добавит новые
-        
-        foreach ($this->colorStocks as $colorId => $stock) {
-            $this->product->colors()->attach([
-                $colorId => ['stock' => $stock]
+        $data = $this->validate(
+            $request->rules(),
+            $request->messages()
+        );
+        try{
+
+            DB::transaction(function() use($data) {
+
+                // Сохраняем в storage/app/public/images
+                $imagePath = $data['image']->store('images', 'public');
+               
+                // Создаём товар
+                $this->product = Product::create([
+                    'name'        => $data['name'],
+                    'description' => $data['description'],
+                    'price'       => $data['price'],
+                    'image_url'   => $imagePath,
+                    'category_id' => $data['categoryId'],
+                ]);
+                
+                $this->product->subcategories()->sync($data['subcategoryIds']); //sync удаляет все кроме того что есть в массиве и добавит новые
+                
+
+                if (!empty($data['colorStocks'])) {
+                    $this->product->colors()->attach($data['colorStocks']);
+                }
+                $this->dispatchBrowserEvent('toast', [
+                    'type'    => 'success',
+                    'message' => "Товар {$data['name']} добавлен"]);
+
+                $this->reset(['name', 'description', 'price', 'categoryId', 'subcategoryIds', 'colorStocks', 'image', 'product']);
+            });
+        } catch(\Throwable $e) {
+            $this->dispatchBrowserEvent('toast', [
+                'type'    => 'error',
+                'message' => 'Ошибка при добавлении. ' . $e->getMessage(),
             ]);
         }
-        $this->reset(['name', 'description', 'price', 'categoryId', 'subcategoryIds', 'colorStocks', 'image', 'product']);
-        session()->flash('success', 'Товар успешно добавлен!');
-
     }
     public function render()
     {

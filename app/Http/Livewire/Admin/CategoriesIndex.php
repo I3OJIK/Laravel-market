@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Category;
 use App\Models\Subcategory;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Routing\Route;
 use Livewire\Component;
 
 class CategoriesIndex extends Component
@@ -16,12 +18,7 @@ class CategoriesIndex extends Component
     public $editedSubcategoryDescription = '';
 
 
-    public function mount()
-    {
-        
-        // dd(count($this->categories->subcategories));
-
-    }
+    
 
     public function deleteSubcategory($id)
     {

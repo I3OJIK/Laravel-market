@@ -31,6 +31,7 @@
           rows="3"
           class="w-full border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-1"
         ></textarea>
+        @error('description') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
       </div>
   
       {{-- Цена --}}
@@ -73,23 +74,27 @@
             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
           @endforeach
         </select>
+         @error('categoryId') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
       </div>
   
       {{-- Подкатегории --}}
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Подкатегории</label>
         <div class="grid grid-cols-2 gap-2">
-          @foreach($subcategories as $subcategory)
-            <label class="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                wire:model.defer="subcategoryIds"
-                value="{{ $subcategory->id }}"
-                class="form-checkbox h-4 w-4 text-blue-600"
-              />
-              <span>{{ $subcategory->name }}</span>
-            </label>
-          @endforeach
+          @if ($subcategories)
+            @foreach($subcategories as $subcategory)
+              <label class="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  wire:model.defer="subcategoryIds"
+                  value="{{ $subcategory->id }}"
+                  class="form-checkbox h-4 w-4 text-blue-600"
+                />
+                <span>{{ $subcategory->name }}</span>
+              </label>
+            @endforeach
+          @endif
+          @error('subcategoryIds') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
         </div>
       </div>
   
@@ -103,12 +108,13 @@
               <input
                 type="number"
                 min="0"
-                wire:model.defer="colorStocks.{{ $color->id }}"
+                wire:model.defer="colorStocks.{{ $color->id}}.stock"
                 class="w-24 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 "
               />
             </div>
           @endforeach
         </div>
+        @error('colorStocks') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
       </div>
   
       {{-- Кнопка --}}
@@ -119,5 +125,26 @@
         >Сохранить</button>
       </div>
     </form>
+
+     {{-- alphine js выводит уведомление которое ловит от  $this->dispatchBrowserEvent('toast',  --}}
+<div 
+    x-data="{ show: false, message: '', type: 'success' }"
+    x-show="show"
+    x-transition:enter="transform transition ease-out duration-500"
+    x-transition:enter-start="translate-y-20 opacity-0"
+    x-transition:enter-end="translate-y-0 opacity-100"
+    x-transition:leave="transform transition ease-in duration-300"
+    x-transition:leave-start="translate-y-0 opacity-100"
+    x-transition:leave-end="translate-y-20 opacity-0"
+    @toast.window="
+        type = $event.detail.type;
+        message = $event.detail.message;
+        show = true;
+        setTimeout(() => show = false, 3000);
+    "
+    class="fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white z-50"
+    :class="type === 'success' ? 'bg-green-500' : 'bg-red-500'">
+    <span x-text="message"></span>
+</div>
 </div>
   
