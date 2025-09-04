@@ -218,3 +218,68 @@ php artisan rabbitmq:publish
 php artisan make:resource  Resourses.OrdeerItemResource
 php artisan make:resource OrderItemResource
 exit
+hp -version
+php -version
+composer require predis/predis
+php artisan make:command redisTest
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+exit
+php artisan migrate --seed
+php artisan migrate --seed
+php artisan migrate --seed -fresh
+php artisan migrate --seed --fresh
+php artisan migrate --fresh --seed
+php artisan migrate:refresh --seed
+php artisan migrate --fresh 
+php artisan migrate -h
+php artisan migrate:refresh -h
+php artisan migrate -h
+php artisan migrate: -h
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan make seed UserTableSeed
+php artisan make seeder UserTableSeed
+php artisan make:seeder UserTableSeed
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan make:seeder UserTableSeeder
+php artisan migrate:fresh --seed
+php artisan migrate:fresh --seed
+php artisan config:cache
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+exit
+redis-cli -h redis -p 6379 ping
+exit
+apt-get update
+apt-get install -y redis-tools
+exit
+php artisan config:clear
+php artisan config:clear
+php artisan cache:clear
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan redis:go
+php artisan tinker
+php artisan tinker
+php -m | grep -i redis
+apt-get install -y php-redis
+exit
+redis-cli -h redis -p 6379 ping
+telnet redis 6379
+nc -zv redis 6379
+php -m | grep redis
+apt-get update && apt-get install -y php-redis
+docker exec -it --user root laravel-app bash
+exit

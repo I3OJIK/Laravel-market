@@ -19,6 +19,7 @@
         "livewire/livewire": "^2.12",
         "php-amqplib/php-amqplib": "^3.4",
         "phpseclib/bcmath_compat": "^2.0",
+        "predis/predis": "^3.2",
         "tymon/jwt-auth": "1.0.0"
     },
     "require-dev": {

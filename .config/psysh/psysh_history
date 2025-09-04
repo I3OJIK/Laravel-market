@@ -1,2 +1,5 @@
 Auth::loginUsingId(1);
 Auth::user()->orders();
+config('database.redis')
+Cache::getDefaultDriver()
+Cache::store('redis')->getStore()->getConnection()->getConfig()

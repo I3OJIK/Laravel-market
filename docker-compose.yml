@@ -53,6 +53,15 @@ services:
       - "15672:15672"
     networks:
       - app-network
+  
+  redis:
+    image: redis:8-alpine
+    container_name: laravel-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
 
 
 networks:
