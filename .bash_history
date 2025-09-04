@@ -195,3 +195,26 @@ php artisan rabbitmq:publish
 php artisan rabbitmq:publish
 php artisan rabbitmq:publish
 exit
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan rabbitmq:publish
+php artisan make:resource  Resourses.OrdeerItemResource
+php artisan make:resource OrderItemResource
+exit
