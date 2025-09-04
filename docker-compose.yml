@@ -46,6 +46,15 @@ services:
     ports:
       - "3307:3306"
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+
 networks:
   app-network:
     driver: bridge

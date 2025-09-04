@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Http\Livewire\Rules\CartValidationRules;
+use App\Http\Resources\OrderItemResource;
 use App\Models\Address;
 use App\Models\CartItem;
 use App\Models\ColorProduct;
@@ -11,6 +12,7 @@ use App\Models\OrderItem;
 use App\Services\CartService;
 use App\Services\AddressService;
 use App\Services\OrderService;
+use App\Services\RabbitOrderPublisher;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -187,8 +189,8 @@ class Cart extends Component
      /**
       * Подтверждение заказа: валидация и создание.
       */
-     public function OrderConfirm(): void
-     {
+      public function OrderConfirm(): void
+      {
          $this->validate(array_merge(
              CartValidationRules::address(),
              CartValidationRules::cart()
@@ -202,6 +204,15 @@ class Cart extends Component
              $this->addressService,
              $this->cartService
          );
+        //  отправка в тг уведомления о заказе
+        $orderPublisher = app(RabbitOrderPublisher::class);
+        $items = OrderItemResource::collection($order->orderItems);
+        $orderData = [
+            'order_id' => $order->id,
+            'total'    => $this->totalPrice,
+            'items'    => $items,
+        ];
+        $orderPublisher->publishNewOrder($orderData);
         //  сброс computed свойств
          $this->forgetComputed();
          if ($order) {
