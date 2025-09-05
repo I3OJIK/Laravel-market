@@ -51,14 +51,15 @@ class ProductCacheService
      * @param string $sortDirection
      * @param int $page
      * @param int $perPage
+     * @param int $ttl Время жизни кеша в секундах
      * 
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    function getProducts(?int $subcategoryId, ?string $searchInput, string $sortField, string $sortDirection, int $page, int $perPage = 16) : \Illuminate\Pagination\LengthAwarePaginator
+    function getProducts(?int $subcategoryId, ?string $searchInput, string $sortField, string $sortDirection, int $page, int $perPage = 16, int $ttl = 3600) : \Illuminate\Pagination\LengthAwarePaginator
     {
         $cacheKey = $this->makeCacheKey($subcategoryId, $searchInput, $sortField, $sortDirection, $page);
 
-        $products = Cache::tags("products")->remember($cacheKey, 3600, function () use ($subcategoryId, $searchInput, $sortField, $sortDirection, $perPage){
+        $products = Cache::tags("products")->remember($cacheKey, $ttl, function () use ($subcategoryId, $searchInput, $sortField, $sortDirection, $perPage){
             $query = Product::query();
 
             if ($subcategoryId) {
@@ -78,13 +79,55 @@ class ProductCacheService
     }
 
     /**
+     * Получить один продукт с кэшем
+     *
+     * @param int $id
+     * @param int $ttl Время жизни кеша в секундах
+     * @return Product|null
+     */
+    public function getProduct(int $id, int $ttl = 1800): ?Product
+    {
+        $cacheKey = "product:{$id}";
+
+        return Cache::tags("product")->remember($cacheKey, $ttl, function () use ($id) {
+            return Product::with('colors')->find($id);
+        });
+    }
+
+    /**
+     * Очистить кэш одного продукта
+     * 
+     * @return void
+     */
+    private function clearProduct(int $id) : void
+    {
+        Cache::tags('product')->forget("product:{$id}");
+    }
+
+
+    /**
      * Очистить весь кэш под тегом products
      * 
      * @return void
      */
-    function clearAll() : void
+    private function clearAll() : void
     {
         Cache::tags("products")->flush();
+    }
+
+    /**
+     * Очистить кеш продуктов (Списков и если есть id единичные продукты)
+     * 
+     * @param int|null $productId
+     * 
+     * @return void
+     */
+    public function clearCache(?int $productId = null): void
+    {
+        if ($productId) {
+            $this->clearProduct($productId); // отдельный продукт
+        }
+        $this->clearAll(); // списки
     }
 
 }

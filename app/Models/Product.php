@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Services\RedisCache\ProductCacheService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Продукт
@@ -29,6 +31,22 @@ class Product extends Model
     protected $guarded =[];
     use SoftDeletes;
 
+
+    /**
+     * Удаление кэша
+     * 
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        static::saved(function ($product) {
+            app(ProductCacheService::class)->clearCache($product->id);
+        });
+    
+        static::deleted(function ($product) {
+            app(ProductCacheService::class)->clearCache($product->id);
+        });
+    }
     /**
      * Получить все подкатегории, к которым относится продукт.
      *

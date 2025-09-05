@@ -7,6 +7,7 @@ use App\Models\ColorProduct;
 use App\Services\CartService;
 use App\Models\Product;
 use App\Services\ColorProductService;
+use App\Services\RedisCache\ProductCacheService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -20,6 +21,7 @@ use Livewire\Component;
  *
  * @property CartService $cartService Сервис работы с корзиной
  * @property ColorProductService $colorService Сервис работы с pivot-записью color_product (остатки по цвету)
+ * @property ProductCacheService $colorService Сервис работы с pivot-записью color_product (остатки по цвету)
  * @property Product|null $selectedProduct Выбранный продукт (модель Product)
  * @property ColorProduct|null $selectedColorProduct selectedColorProduct
  * @property int|null $selectedColorid ID выбранного цвета
@@ -29,6 +31,7 @@ class ProductIndex extends Component
 {
     protected CartService $cartService;             // инициализация сервиса корзины
     protected ColorProductService $colorService;    // инициализация сервиса цветов
+    protected ProductCacheService $cacheService;
     public $selectedProduct;                        // выбранный продукт
     public $selectedColorId;                        // айди выбранного цвета
     public $quantity;                               // количество товара в корзине   
@@ -40,10 +43,11 @@ class ProductIndex extends Component
      * @param CartService $cartService
      * @param ColorProductService $colorService
      */
-    public function boot(CartService $cartService, ColorProductService $colorService): void
+    public function boot(CartService $cartService, ColorProductService $colorService, ProductCacheService $cacheService): void
     {
         $this->cartService = $cartService;
         $this->colorService = $colorService;
+        $this->cacheService = $cacheService;
     }
 
     /**
@@ -53,7 +57,7 @@ class ProductIndex extends Component
      */
     public function mount(int $id): void
     {
-        $this->selectedProduct = Product::with('colors')->find($id);
+        $this->selectedProduct =  $this->cacheService->getProduct($id);
 
         if($item = $this->cartItem){
             $this->selectedColorId = $item->colorProduct->color_id;
