@@ -5,6 +5,8 @@ namespace App\Http\Livewire;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Subcategory;
+use App\Services\RedisCache\ProductCacheService;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -23,7 +25,7 @@ use Livewire\WithPagination;
  * @property \App\Models\Subcategory|null $selectedSubcategory  Выбранная подкатегория
  */
 
-class HomeProductList extends Component
+class ProductCatalog extends Component
 {
     use WithPagination;
 
@@ -32,7 +34,13 @@ class HomeProductList extends Component
     public string $sortDirection = 'asc';    // направление сортировки
     public $selectedSubcategory = null;
 
+    protected ProductCacheService $cacheService;
 
+    public function boot(ProductCacheService $cacheService)
+    {
+        $this->cacheService = $cacheService;
+    }
+    
     /**
      * Сброс страницы при смене подкатегории
      * 
@@ -93,25 +101,20 @@ class HomeProductList extends Component
      */
     public function render()
     {
-        $products = Product::query();
-        
-        //при выбре категории
-        if ($this->selectedSubcategory) {
-           $products = $this->selectedSubcategory->products();
-
-        }
-        // при осуществлении поиска
-        // фильтрация по поисковому запросу
-        if (strlen($this->searchInput) >= 3) {
-            $products->where('name', 'like',  $this->searchInput . '%');
-        }
-
-        // Сортировка
-        $products->orderBy($this->sortField, $this->sortDirection);
-
-        return view('livewire.home-product-list', [
-            'products' => $products->paginate(16),
-            'categories' => Category::with('subcategories')->get(),
+        $products = $this->cacheService->getProducts(
+            $this->selectedSubcategory->id ?? null,
+            $this->searchInput,
+            $this->sortField,
+            $this->sortDirection,
+            $this->page
+        );
+        // Категории
+        $categories = Cache::remember('categories_with_subcategories', 3600, function () {
+            return Category::with('subcategories')->get();
+        });
+        return view('livewire.product-catalog', [
+            'products' => $products,
+            'categories' => $categories,
             'subcategories' => $this->selectedSubcategory
         ]);
     }

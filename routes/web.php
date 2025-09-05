@@ -28,8 +28,8 @@ Auth::routes();
 // 1. Главная — список товаров
 Route::get('/', function () {
     // передаём в шаблон initialId = null
-    return view('welcome');
-})->name('home');
+    return view('productCatalog ');
+})->name('products.show');
 
 // 2. Страница товара — тот же шаблон, но initialId = $id
 Route::get('/product/{id}', function ($id) {
