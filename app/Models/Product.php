@@ -46,6 +46,7 @@ class Product extends Model
         static::deleted(function ($product) {
             app(ProductCacheService::class)->clearCache($product->id);
         });
+ 
     }
     /**
      * Получить все подкатегории, к которым относится продукт.

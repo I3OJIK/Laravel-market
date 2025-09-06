@@ -1,13 +1,39 @@
 <div>
   <!-- Поиск -->
-  <div class="flex-1 mx-4 max-w-lg items-center justify-center m-4">
-    <div class="relative ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
-      </svg>
-      <input wire:model="searchInput" class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 shadow-sm transition-all duration-900  hover:border-indigo-600 focus:outline-none focus:border-indigo-600  focus:shadow" placeholder="Input name product...(min 3 symbol)" />
+  <div class="flex items-center justify-between w-full px-2 py-2 relative">
+  
+    <!-- Поиск -->
+    <div class="flex-1 mx-3 max-w-lg ">
+      <div class="relative">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+        </svg>
+        <input wire:model.debounce.500ms="searchInput" class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 shadow-sm transition-all duration-900  hover:border-indigo-600 focus:outline-none focus:border-indigo-600  focus:shadow" placeholder="Input name product...(min 3 symbol)" />
+      </div>
+    </div>
+  
+    <!-- Сортировка -->
+    <div class="relative group">
+      <a type="button" class="group inline-flex items-center  text-sm font-medium text-gray-700  hover:text-gray-900 cursor-pointer" id="menu-button">
+          Sort
+          <svg class="mr-1 ml-1 h-5 w-5 text-gray-400 transition-all duration-500 group-hover:text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+          </svg>
+        </a>
+  
+      <!-- Меню открывается при наведении на родительский элемент или сам список -->
+      <div class="absolute right-0 mt-0 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 z-50 opacity-0 group-hover:opacity-100 group-hover:block hidden transition-opacity">
+          <div class="py-1 mt-2">
+              <a href="#" wire:click.prevent="sortBy('price', 'asc')" class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900  hover:text-indigo-500">Price: Low to High</a>
+              <a href="#" wire:click.prevent="sortBy('price', 'desc')" class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900  hover:text-indigo-500">Price: High to Low</a>
+              <a href="#" wire:click.prevent="sortBy('name', 'asc')" class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900  hover:text-indigo-500">Name: A to Z</a>
+              <a href="#" wire:click.prevent="sortBy('name', 'desc')" class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900  hover:text-indigo-500">Name: Z to A</a>
+              <a href="#" wire:click.prevent="sortBy('id', 'asc')" class="block px-4 py-2 text-sm text-gray-700 transition-all duration-900  hover:text-indigo-500">Reset</a>
+          </div>
+      </div>
     </div>
   </div>
+
 <div class="relative flex flex-col w-full max-w-full max-h-[600px] overflow-auto text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
     <div class="w-full ">       
       
@@ -121,7 +147,9 @@
     
     
 </div>
-
+<div class="w-full py-8">
+  {{ $products->links() }}
+</div>  
 <div>
   {{-- Модалка внутри @if --}}
   @if($showModal)

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
+
 class ProductCacheService
 {
     /**
@@ -55,7 +56,7 @@ class ProductCacheService
      * 
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    function getProducts(?int $subcategoryId, ?string $searchInput, string $sortField, string $sortDirection, int $page, int $perPage = 16, int $ttl = 3600) : \Illuminate\Pagination\LengthAwarePaginator
+    function getProducts(?int $subcategoryId = null, ?string $searchInput, string $sortField, string $sortDirection, int $page, int $perPage = 16, int $ttl = 3600) : \Illuminate\Pagination\LengthAwarePaginator
     {
         $cacheKey = $this->makeCacheKey($subcategoryId, $searchInput, $sortField, $sortDirection, $page);
 
@@ -72,7 +73,7 @@ class ProductCacheService
                 $query->where('name', 'like', '%'. $searchInput . '%');
             }
 
-            return $query->orderBy($sortField, $sortDirection)->paginate($perPage);
+            return $query->with(['category', 'subcategories', 'colors'])->orderBy($sortField, $sortDirection)->paginate($perPage);
         });
 
         return $products;
@@ -90,7 +91,7 @@ class ProductCacheService
         $cacheKey = "product:{$id}";
 
         return Cache::tags("product")->remember($cacheKey, $ttl, function () use ($id) {
-            return Product::with('colors')->find($id);
+            return Product::with(['subcategories','colors','category'])->find($id);
         });
     }
 
